@@ -7,12 +7,13 @@ const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const isProduction = process.env.NODE_ENV === 'production';
 
 // Middleware
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 
-// ✅ Get Wi-Fi IP address (skip virtual adapters)
+// ✅ Get Wi-Fi IP address (skip virtual/ethernet adapters)
 function getLocalIP() {
   const interfaces = os.networkInterfaces();
   for (const name of Object.keys(interfaces)) {
@@ -69,7 +70,14 @@ app.get('/scan', (req, res) => {
 // 🎯 Generate QR Code
 app.post('/generate', async (req, res) => {
   const { campaign, redirect } = req.body;
-  const trackUrl = `${req.protocol}://${req.headers.host}/scan?campaign=${encodeURIComponent(campaign)}&redirect=${encodeURIComponent(redirect)}`;
+
+  // ✅ Dynamic base URL based on environment
+  const baseURL = isProduction
+    ? `${req.protocol}://${req.headers.host}`         // e.g., https://qr-app.onrender.com
+    : `http://${localIP}:${PORT}`;                   // e.g., http://192.168.100.5:3000
+
+  const trackUrl = `${baseURL}/scan?campaign=${encodeURIComponent(campaign)}&redirect=${encodeURIComponent(redirect)}`;
+
   try {
     const qrDataUrl = await QRCode.toDataURL(trackUrl);
     res.send(`
