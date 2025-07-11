@@ -55,12 +55,18 @@ app.get('/', (req, res) => {
 app.get('/scan', (req, res) => {
   const campaign = req.query.campaign || 'UNKNOWN';
   const redirect = req.query.redirect || 'https://example.com';
+
   const log = {
     campaign,
-    timestamp: new Date().toISOString(),
+    timestamp: new Date().toLocaleString('en-KE', {
+      timeZone: 'Africa/Nairobi',
+      dateStyle: 'medium',
+      timeStyle: 'short'
+    }),
     ip: req.ip,
     userAgent: req.headers['user-agent']
   };
+
   scanLogs.push(log);
   saveLog(log);
   console.log('📥 Scan logged:', log);
@@ -71,7 +77,6 @@ app.get('/scan', (req, res) => {
 app.post('/generate', async (req, res) => {
   const { campaign, redirect } = req.body;
 
-  // ✅ Dynamic base URL based on environment
   const baseURL = isProduction
     ? `${req.protocol}://${req.headers.host}`         // e.g., https://qr-app.onrender.com
     : `http://${localIP}:${PORT}`;                   // e.g., http://192.168.100.5:3000
