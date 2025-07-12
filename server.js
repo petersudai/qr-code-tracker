@@ -78,8 +78,8 @@ app.post('/generate', async (req, res) => {
   const { campaign, redirect } = req.body;
 
   const baseURL = isProduction
-    ? `${req.protocol}://${req.headers.host}`         // e.g., https://qr-app.onrender.com
-    : `http://${localIP}:${PORT}`;                   // e.g., http://192.168.100.5:3000
+    ? `${req.protocol}://${req.headers.host}`
+    : `http://${localIP}:${PORT}`;        
 
   const trackUrl = `${baseURL}/scan?campaign=${encodeURIComponent(campaign)}&redirect=${encodeURIComponent(redirect)}`;
 
