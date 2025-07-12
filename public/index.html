@@ -1,52 +1,77 @@
-<!-- 📁 public/index.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>QR Scan Tracker</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .fade-in {
+      animation: fadeIn 0.8s ease-out forwards;
+      opacity: 0;
+    }
+
+    .slide-up {
+      animation: slideUp 0.7s ease-out forwards;
+      transform: translateY(20px);
+      opacity: 0;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideUp {
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+  </style>
 </head>
-<body class="bg-gray-100 text-gray-800">
+<body class="bg-gray-900 text-gray-100 font-sans min-h-screen">
 
   <!-- 🌐 Navbar -->
-  <nav class="bg-white shadow-md px-4 py-4 flex justify-between items-center">
-    <h1 class="text-xl font-bold text-blue-700">QR Scan Tracker</h1>
-    <a href="/dashboard" class="text-blue-600 font-medium hover:underline">📊 View Dashboard</a>
+  <nav class="bg-gray-800 shadow-md px-6 py-4 flex justify-between items-center">
+    <h1 class="text-xl font-bold text-blue-400 fade-in">QR Scan Tracker</h1>
+    <a href="/dashboard" class="text-blue-300 hover:text-blue-500 transition duration-300 fade-in">📊 View Dashboard</a>
   </nav>
 
   <!-- 🔥 Hero Section -->
-  <section class="text-center py-12 px-6 max-w-3xl mx-auto">
-    <h2 class="text-3xl font-bold mb-4">Track Where Your QR Codes Are Scanned</h2>
-    <p class="text-lg text-gray-600 mb-8">
-      Generate QR codes with location tags. See where they're scanned. Improve your offline marketing strategy — all without needing a mobile app.
+  <section class="text-center py-14 px-6 max-w-3xl mx-auto fade-in">
+    <h2 class="text-4xl font-bold mb-4 text-white slide-up">Track Where Your QR Codes Are Scanned</h2>
+    <p class="text-lg text-gray-300 mb-8 slide-up delay-100">
+      Generate QR codes with location tags. See where they're scanned. Improve your offline marketing strategy — no app required.
     </p>
   </section>
 
   <!-- 🧾 Generator Form -->
-  <section class="bg-white max-w-xl mx-auto shadow-md rounded-lg p-6">
-    <h3 class="text-xl font-semibold mb-4">🎯 Generate a New QR Code</h3>
-    <form action="/generate" method="POST" class="space-y-4">
+  <section class="bg-gray-800 max-w-xl mx-auto shadow-md rounded-xl p-8 fade-in slide-up">
+    <h3 class="text-2xl font-semibold mb-4 text-blue-300">🎯 Generate a New QR Code</h3>
+    <form action="/generate" method="POST" class="space-y-5">
       <div>
-        <label for="campaign" class="block mb-1 font-medium">Campaign Name / Location</label>
+        <label for="campaign" class="block mb-1 font-medium text-gray-200">Campaign Name / Location</label>
         <input type="text" id="campaign" name="campaign" required
-               placeholder="e.g. NAIROBI CBD"
-               class="w-full border rounded px-3 py-2" />
+               placeholder="e.g. UON-CENTRAL"
+               class="w-full border border-gray-600 bg-gray-700 text-white rounded px-3 py-2" />
       </div>
       <div>
-        <label for="redirect" class="block mb-1 font-medium">Target URL</label>
+        <label for="redirect" class="block mb-1 font-medium text-gray-200">Target URL</label>
         <input type="url" id="redirect" name="redirect" required
                placeholder="e.g. https://example.com"
-               class="w-full border rounded px-3 py-2" />
+               class="w-full border border-gray-600 bg-gray-700 text-white rounded px-3 py-2" />
       </div>
-      <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+      <button type="submit"
+              class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition duration-300">
         🚀 Generate QR Code
       </button>
     </form>
   </section>
 
   <!-- 👣 Footer -->
-  <footer class="text-center text-sm text-gray-500 mt-12 mb-4">
+  <footer class="text-center text-sm text-gray-500 mt-12 mb-4 fade-in">
     Built by Peter Sudai · © 2025
   </footer>
 
