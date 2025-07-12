@@ -8,11 +8,9 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const isProduction = process.env.NODE_ENV === 'production';
 
-// Middleware
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 
-// Get Wi-Fi IP address (skip virtual/ethernet adapters)
 function getLocalIP() {
   const interfaces = os.networkInterfaces();
   for (const name of Object.keys(interfaces)) {
@@ -30,7 +28,6 @@ function getLocalIP() {
 }
 const localIP = getLocalIP();
 
-// Log storage
 const logFile = 'logs.json';
 function loadLogs() {
   if (fs.existsSync(logFile)) {
@@ -45,12 +42,10 @@ function saveLog(entry) {
 }
 const scanLogs = loadLogs();
 
-// Landing page
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
-// QR scan endpoint
 app.get('/scan', (req, res) => {
   const campaign = req.query.campaign || 'UNKNOWN';
   const redirect = req.query.redirect || 'https://example.com';
@@ -72,7 +67,6 @@ app.get('/scan', (req, res) => {
   res.redirect(redirect);
 });
 
-// QR code generator
 app.post('/generate', async (req, res) => {
   const { campaign, redirect } = req.body;
   const baseURL = isProduction
@@ -87,7 +81,7 @@ app.post('/generate', async (req, res) => {
       <html lang="en" class="dark">
       <head>
         <meta charset="UTF-8" />
-        <title>QR Code Generated</title>
+        <title>QRanger | QR Generated</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <style>
           .fade-in { animation: fadeIn 0.8s ease-out forwards; opacity: 0; }
@@ -98,12 +92,12 @@ app.post('/generate', async (req, res) => {
       </head>
       <body class="bg-gray-900 text-gray-100 p-8 font-sans">
         <nav class="bg-gray-800 shadow-md px-6 py-4 flex justify-between items-center">
-          <h1 class="text-xl font-bold text-blue-400">QR Scan Tracker</h1>
+          <h1 class="text-xl font-bold text-blue-400">QRanger</h1>
           <a href="/dashboard" class="text-blue-300 hover:text-blue-500 transition duration-300">📊 Dashboard</a>
         </nav>
 
         <div class="max-w-xl mx-auto mt-10 bg-gray-800 shadow-lg rounded-xl p-6 fade-in slide-up">
-          <h2 class="text-2xl font-semibold mb-4 text-blue-300">QR Code for campaign: ${campaign}</h2>
+          <h2 class="text-2xl font-semibold mb-4 text-blue-300">QR Code for: ${campaign}</h2>
           <img src="${qrDataUrl}" alt="QR Code" class="mb-4 border border-gray-700 rounded" />
           <p><strong>Scan URL:</strong> <a href="${trackUrl}" target="_blank" class="text-blue-400 underline break-words">${trackUrl}</a></p>
           <a href="/" class="inline-block mt-6 text-blue-500 hover:underline">← Back to Generator</a>
@@ -117,7 +111,6 @@ app.post('/generate', async (req, res) => {
   }
 });
 
-// Dashboard view
 app.get('/dashboard', (req, res) => {
   const rows = [...scanLogs].reverse().map(log => `
     <tr class="border-t border-gray-700 hover:bg-gray-800">
@@ -133,7 +126,7 @@ app.get('/dashboard', (req, res) => {
     <html lang="en" class="dark">
     <head>
       <meta charset="UTF-8" />
-      <title>Scan Dashboard</title>
+      <title>QRanger | Dashboard</title>
       <script src="https://cdn.tailwindcss.com"></script>
       <style>
         .fade-in { animation: fadeIn 0.8s ease-out forwards; opacity: 0; }
@@ -145,12 +138,12 @@ app.get('/dashboard', (req, res) => {
     <body class="bg-gray-900 text-gray-100 p-8 font-sans">
 
       <nav class="bg-gray-800 shadow-md px-6 py-4 flex justify-between items-center">
-        <h1 class="text-xl font-bold text-blue-400">QR Scan Tracker</h1>
+        <h1 class="text-xl font-bold text-blue-400">QRanger</h1>
         <a href="/" class="text-blue-300 hover:text-blue-500 transition duration-300">🏠 Home</a>
       </nav>
 
       <div class="max-w-6xl mx-auto bg-gray-800 shadow-lg rounded-xl p-6 mt-8 fade-in slide-up">
-        <h1 class="text-2xl font-semibold mb-6 text-blue-300">📊 QR Scan Dashboard</h1>
+        <h1 class="text-2xl font-semibold mb-6 text-blue-300">📊 QRanger Dashboard</h1>
         <table class="table-auto w-full text-sm border border-gray-700 rounded overflow-hidden">
           <thead class="bg-gray-700 text-left text-gray-300 uppercase">
             <tr>
@@ -171,9 +164,8 @@ app.get('/dashboard', (req, res) => {
   `);
 });
 
-// Start server
 app.listen(PORT, () => {
-  console.log(`🚀 Server running:`);
+  console.log(`🚀 QRanger server running:`);
   console.log(`→ Local:   http://localhost:${PORT}`);
   console.log(`→ Network: http://${localIP}:${PORT}`);
 });
