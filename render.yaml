@@ -1,0 +1,24 @@
+# Render Blueprint — one-click deploy for ZipLock (demo configuration).
+# In the Render dashboard: New + > Blueprint, point it at this repo.
+#
+# NOTE: this demo uses the JSON file store, which lives on Render's EPHEMERAL
+# disk — data resets on every deploy and on free-tier spin-down. For durable
+# data later, either:
+#   1) add a Render Disk and set DATA_DIR to its mount path, or
+#   2) set MONGO_URI (e.g. a MongoDB Atlas cluster) — the app switches to it
+#      automatically with no code changes.
+services:
+  - type: web
+    name: ziplock
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SESSION_SECRET
+        generateValue: true
+      # Uncomment to use a database instead of the JSON file store:
+      # - key: MONGO_URI
+      #   sync: false

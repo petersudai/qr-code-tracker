@@ -1,0 +1,137 @@
+<%- include('partials/head', { title: 'Dashboard' }) %>
+<%
+  function fmtDate(d){ return d ? new Date(d).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' }) : '—'; }
+  function fmtAgo(d){
+    if(!d) return 'No scans yet';
+    const s = Math.floor((Date.now()-new Date(d))/1000);
+    if(s<60) return 'just now';
+    if(s<3600) return Math.floor(s/60)+'m ago';
+    if(s<86400) return Math.floor(s/3600)+'h ago';
+    return Math.floor(s/86400)+'d ago';
+  }
+%>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<%- include('partials/nav') %>
+
+<main class="max-w-6xl mx-auto px-5 sm:px-6 py-10">
+  <div class="flex flex-wrap items-end justify-between gap-4 mb-8">
+    <div>
+      <h1 class="text-3xl font-bold text-white">Dashboard</h1>
+      <p class="text-slate-400 mt-1">Every scan across all your campaigns.</p>
+    </div>
+    <a href="/#generate" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-[#06140e] bg-brand-400 hover:bg-brand-300 shadow-glow transition">
+      <i data-lucide="plus" class="w-4 h-4"></i> New QR code
+    </a>
+  </div>
+
+  <% if (stats.total === 0 && campaigns.length === 0) { %>
+    <div class="rounded-3xl bg-white/5 ring-1 ring-white/10 p-12 text-center">
+      <span class="inline-grid place-items-center w-16 h-16 rounded-2xl bg-brand-500/15 text-brand-400 mb-5"><i data-lucide="qr-code" class="w-8 h-8"></i></span>
+      <h2 class="text-xl font-bold text-white">No campaigns yet</h2>
+      <p class="text-slate-400 mt-2 max-w-sm mx-auto">Generate your first trackable QR code and scans will start showing up here.</p>
+      <a href="/#generate" class="inline-flex items-center gap-2 mt-6 px-5 py-3 rounded-xl font-semibold text-[#06140e] bg-brand-400 hover:bg-brand-300 shadow-glow transition">
+        <i data-lucide="sparkles" class="w-5 h-5"></i> Create a QR code
+      </a>
+    </div>
+  <% } else { %>
+
+  <!-- Stat cards -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <% const cards = [
+      ['scan-line','Total scans', stats.total.toLocaleString(), 'brand'],
+      ['layout-grid','Campaigns', campaigns.length.toLocaleString(), 'sky'],
+      ['map-pin','Top location', stats.topCity || stats.topCountry || '—', 'violet'],
+      ['clock','Last scan', fmtAgo(stats.lastScan), 'amber']
+    ]; %>
+    <% cards.forEach(function(c, i){ %>
+    <div class="reveal reveal-<%= i+1 %> rounded-2xl bg-white/5 ring-1 ring-white/10 p-5">
+      <span class="grid place-items-center w-10 h-10 rounded-xl bg-brand-500/15 text-brand-400 mb-4"><i data-lucide="<%= c[0] %>" class="w-5 h-5"></i></span>
+      <p class="text-sm text-slate-400"><%= c[1] %></p>
+      <p class="text-2xl font-bold text-white mt-0.5 truncate" title="<%= c[2] %>"><%= c[2] %></p>
+    </div>
+    <% }); %>
+  </div>
+
+  <!-- Chart + map -->
+  <div class="grid lg:grid-cols-5 gap-5 mt-5">
+    <div class="lg:col-span-3 rounded-2xl bg-white/5 ring-1 ring-white/10 p-5 sm:p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="font-semibold text-white">Scans · last 14 days</h2>
+        <span class="text-xs text-slate-500">Daily</span>
+      </div>
+      <canvas id="timelineChart" height="120"></canvas>
+    </div>
+    <div class="lg:col-span-2 rounded-2xl bg-white/5 ring-1 ring-white/10 p-5 sm:p-6">
+      <h2 class="font-semibold text-white mb-4">Where scans happen</h2>
+      <% if (stats.points.length) { %>
+        <div id="map" class="h-64 rounded-xl"></div>
+      <% } else { %>
+        <div class="h-64 grid place-items-center text-center text-sm text-slate-500 rounded-xl bg-[#0b1220] ring-1 ring-white/5">
+          <div><i data-lucide="map" class="w-7 h-7 mx-auto mb-2 text-slate-600"></i>No located scans yet.<br>Scans from real networks will appear on the map.</div>
+        </div>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- Breakdown -->
+  <div class="grid lg:grid-cols-3 gap-5 mt-5">
+    <%- include('partials/breakdown', { title: 'Top countries', icon: 'globe', rows: stats.countries.slice(0,5), total: stats.total }) %>
+    <%- include('partials/breakdown', { title: 'Devices', icon: 'smartphone', rows: stats.devices.slice(0,5), total: stats.total }) %>
+    <%- include('partials/breakdown', { title: 'Browsers', icon: 'compass', rows: stats.browsers.slice(0,5), total: stats.total }) %>
+  </div>
+
+  <!-- Campaigns table -->
+  <div class="mt-5 rounded-2xl bg-white/5 ring-1 ring-white/10 overflow-hidden">
+    <div class="flex items-center justify-between p-5 sm:p-6 border-b border-white/10">
+      <h2 class="font-semibold text-white">Campaigns</h2>
+      <span class="text-xs text-slate-500"><%= campaigns.length %> total</span>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="text-left text-slate-500">
+          <tr class="border-b border-white/5">
+            <th class="px-5 sm:px-6 py-3 font-medium">Campaign</th>
+            <th class="px-4 py-3 font-medium">Target</th>
+            <th class="px-4 py-3 font-medium text-right">Scans</th>
+            <th class="px-4 py-3 font-medium">Last scan</th>
+            <th class="px-4 py-3 font-medium">Created</th>
+            <th class="px-5 sm:px-6 py-3"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% campaigns.forEach(function(c){ %>
+          <tr class="border-b border-white/5 last:border-0 hover:bg-white/[0.03] transition">
+            <td class="px-5 sm:px-6 py-3.5">
+              <a href="/c/<%= c.slug %>" class="font-medium text-white hover:text-brand-300 transition"><%= c.name %></a>
+            </td>
+            <td class="px-4 py-3.5 text-slate-400 max-w-[200px] truncate"><%= c.targetUrl %></td>
+            <td class="px-4 py-3.5 text-right font-semibold text-white tabular-nums"><%= c.scanCount %></td>
+            <td class="px-4 py-3.5 text-slate-400"><%= fmtAgo(c.lastScan) %></td>
+            <td class="px-4 py-3.5 text-slate-400"><%= fmtDate(c.createdAt) %></td>
+            <td class="px-5 sm:px-6 py-3.5 text-right">
+              <a href="/c/<%= c.slug %>" class="inline-flex items-center text-brand-300 hover:text-brand-200"><i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+            </td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <% } %>
+</main>
+
+<%- include('partials/footer') %>
+<% if (stats.total > 0) { %>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  window.ZIP = {
+    timeline: <%- JSON.stringify(stats.timeline) %>,
+    points: <%- JSON.stringify(stats.points) %>
+  };
+</script>
+<script src="/js/charts.js"></script>
+<% } %>
+</body>
+</html>

@@ -1,0 +1,70 @@
+const express = require('express');
+const QRCode = require('qrcode');
+const router = express.Router();
+const store = require('../services/store');
+const { uniqueSlug } = require('../services/slug');
+const { buildBaseUrl } = require('../services/net');
+const { summarize } = require('../services/analytics');
+
+function normalizeUrl(url) {
+  const trimmed = String(url || '').trim();
+  if (!trimmed) return '';
+  if (!/^https?:\/\//i.test(trimmed)) return `https://${trimmed}`;
+  return trimmed;
+}
+
+async function makeQr(scanUrl) {
+  return QRCode.toDataURL(scanUrl, {
+    errorCorrectionLevel: 'M',
+    margin: 2,
+    width: 480,
+    color: { dark: '#0b1220', light: '#ffffff' }
+  });
+}
+
+// Create a campaign + its tracked QR code.
+router.post('/generate', async (req, res) => {
+  const name = String(req.body.campaign || '').trim();
+  const targetUrl = normalizeUrl(req.body.redirect);
+
+  if (!name || !targetUrl) {
+    return res.status(400).render('error', {
+      page: 'error',
+      message: 'A campaign name and a valid target URL are both required.'
+    });
+  }
+
+  try {
+    const slug = await uniqueSlug(name);
+    const campaign = await store.createCampaign({ name, slug, targetUrl });
+    const scanUrl = `${buildBaseUrl(req)}/s/${slug}`;
+    const qr = await makeQr(scanUrl);
+    res.render('result', { page: 'result', campaign, scanUrl, qr });
+  } catch (err) {
+    console.error('generate failed:', err);
+    res.status(500).render('error', {
+      page: 'error',
+      message: 'Could not generate the QR code. Please try again.'
+    });
+  }
+});
+
+// Single-campaign analytics.
+router.get('/c/:slug', async (req, res) => {
+  try {
+    const campaign = await store.findCampaignBySlug(req.params.slug);
+    if (!campaign) {
+      return res.status(404).render('error', { page: 'error', message: 'Campaign not found.' });
+    }
+    const scans = await store.findScansByCampaign(campaign._id);
+    const stats = summarize(scans);
+    const scanUrl = `${buildBaseUrl(req)}/s/${campaign.slug}`;
+    const qr = await makeQr(scanUrl);
+    res.render('campaign', { page: 'campaign', campaign, scans, stats, scanUrl, qr });
+  } catch (err) {
+    console.error('campaign view failed:', err);
+    res.status(500).render('error', { page: 'error', message: 'Could not load campaign analytics.' });
+  }
+});
+
+module.exports = router;

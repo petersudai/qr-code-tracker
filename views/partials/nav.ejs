@@ -1,0 +1,17 @@
+  <header class="sticky top-0 z-40 backdrop-blur-xl bg-[#070b14]/70 border-b border-white/10">
+    <nav class="max-w-6xl mx-auto px-5 sm:px-6 h-16 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-2.5 group">
+        <span class="grid place-items-center w-9 h-9 rounded-xl bg-brand-500/15 ring-1 ring-brand-500/30 text-brand-400 group-hover:bg-brand-500/25 transition">
+          <i data-lucide="qr-code" class="w-5 h-5"></i>
+        </span>
+        <span class="text-lg font-bold tracking-tight text-white">Zip<span class="text-brand-400">Lock</span></span>
+      </a>
+      <div class="flex items-center gap-1 sm:gap-2 text-sm">
+        <a href="/" class="px-3 py-2 rounded-lg font-medium <%= page === 'home' ? 'text-white bg-white/5' : 'text-slate-400 hover:text-white hover:bg-white/5' %> transition">Generate</a>
+        <a href="/dashboard" class="px-3 py-2 rounded-lg font-medium <%= page === 'dashboard' ? 'text-white bg-white/5' : 'text-slate-400 hover:text-white hover:bg-white/5' %> transition">Dashboard</a>
+        <a href="/#generate" class="hidden sm:inline-flex items-center gap-1.5 ml-1 px-3.5 py-2 rounded-lg font-semibold text-[#06140e] bg-brand-400 hover:bg-brand-300 shadow-glow transition">
+          <i data-lucide="plus" class="w-4 h-4"></i> New code
+        </a>
+      </div>
+    </nav>
+  </header>

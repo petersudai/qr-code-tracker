@@ -1,0 +1,144 @@
+<%- include('partials/head', { title: campaign.name }) %>
+<%
+  function fmtAgo(d){
+    if(!d) return 'never';
+    const s = Math.floor((Date.now()-new Date(d))/1000);
+    if(s<60) return 'just now';
+    if(s<3600) return Math.floor(s/60)+'m ago';
+    if(s<86400) return Math.floor(s/3600)+'h ago';
+    return Math.floor(s/86400)+'d ago';
+  }
+  function fmtTime(d){ return new Date(d).toLocaleString('en-GB', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' }); }
+%>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<%- include('partials/nav') %>
+
+<main class="max-w-6xl mx-auto px-5 sm:px-6 py-10">
+  <a href="/dashboard" class="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-white transition mb-6">
+    <i data-lucide="arrow-left" class="w-4 h-4"></i> All campaigns
+  </a>
+
+  <!-- Header -->
+  <div class="rounded-3xl bg-white/5 ring-1 ring-white/10 backdrop-blur-xl shadow-card p-6 sm:p-8 grid md:grid-cols-[auto,1fr] gap-7 items-center">
+    <div class="qr-frame w-36 mx-auto md:mx-0">
+      <img src="<%= qr %>" alt="QR code for <%= campaign.name %>" />
+    </div>
+    <div>
+      <h1 class="text-2xl sm:text-3xl font-bold text-white"><%= campaign.name %></h1>
+      <a href="<%= campaign.targetUrl %>" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-2 text-sm text-brand-300 hover:text-brand-200 break-all">
+        <i data-lucide="external-link" class="w-4 h-4 shrink-0"></i> <%= campaign.targetUrl %>
+      </a>
+      <div class="mt-5 flex flex-wrap items-center gap-2 rounded-xl bg-[#0b1220] ring-1 ring-white/10 p-2 pl-3.5 max-w-md">
+        <i data-lucide="link" class="w-4 h-4 text-slate-500 shrink-0"></i>
+        <input id="scan-url" value="<%= scanUrl %>" readonly class="flex-1 min-w-0 bg-transparent text-sm text-slate-200 outline-none truncate" />
+        <button onclick="copyLink()" class="shrink-0 grid place-items-center w-9 h-9 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 transition" title="Copy"><i data-lucide="copy" class="w-4 h-4"></i></button>
+        <a href="<%= qr %>" download="ziplock-<%= campaign.slug %>.png" class="shrink-0 grid place-items-center w-9 h-9 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 transition" title="Download"><i data-lucide="download" class="w-4 h-4"></i></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stat cards -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-5">
+    <% const cards = [
+      ['scan-line','Total scans', stats.total.toLocaleString()],
+      ['map-pin','Top location', stats.topCity || stats.topCountry || '—'],
+      ['globe','Countries', stats.countries.length.toLocaleString()],
+      ['clock','Last scan', fmtAgo(stats.lastScan)]
+    ]; %>
+    <% cards.forEach(function(c){ %>
+    <div class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-5">
+      <span class="grid place-items-center w-10 h-10 rounded-xl bg-brand-500/15 text-brand-400 mb-4"><i data-lucide="<%= c[0] %>" class="w-5 h-5"></i></span>
+      <p class="text-sm text-slate-400"><%= c[1] %></p>
+      <p class="text-2xl font-bold text-white mt-0.5 truncate" title="<%= c[2] %>"><%= c[2] %></p>
+    </div>
+    <% }); %>
+  </div>
+
+  <% if (stats.total === 0) { %>
+    <div class="mt-5 rounded-2xl bg-white/5 ring-1 ring-white/10 p-12 text-center">
+      <span class="inline-grid place-items-center w-14 h-14 rounded-2xl bg-brand-500/15 text-brand-400 mb-4"><i data-lucide="radar" class="w-7 h-7"></i></span>
+      <h2 class="text-lg font-bold text-white">Waiting for the first scan</h2>
+      <p class="text-slate-400 mt-2 max-w-sm mx-auto">Print or share the code above. As soon as someone scans it, you'll see the location, device and time right here.</p>
+    </div>
+  <% } else { %>
+
+  <!-- Chart + map -->
+  <div class="grid lg:grid-cols-5 gap-5 mt-5">
+    <div class="lg:col-span-3 rounded-2xl bg-white/5 ring-1 ring-white/10 p-5 sm:p-6">
+      <h2 class="font-semibold text-white mb-4">Scans · last 14 days</h2>
+      <canvas id="timelineChart" height="120"></canvas>
+    </div>
+    <div class="lg:col-span-2 rounded-2xl bg-white/5 ring-1 ring-white/10 p-5 sm:p-6">
+      <h2 class="font-semibold text-white mb-4">Scan locations</h2>
+      <% if (stats.points.length) { %>
+        <div id="map" class="h-64 rounded-xl"></div>
+      <% } else { %>
+        <div class="h-64 grid place-items-center text-center text-sm text-slate-500 rounded-xl bg-[#0b1220] ring-1 ring-white/5">
+          <div><i data-lucide="map" class="w-7 h-7 mx-auto mb-2 text-slate-600"></i>Scans so far came from local networks,<br>which can't be placed on the map.</div>
+        </div>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- Breakdowns -->
+  <div class="grid lg:grid-cols-3 gap-5 mt-5">
+    <%- include('partials/breakdown', { title: 'Top countries', icon: 'globe', rows: stats.countries.slice(0,5), total: stats.total }) %>
+    <%- include('partials/breakdown', { title: 'Devices', icon: 'smartphone', rows: stats.devices.slice(0,5), total: stats.total }) %>
+    <%- include('partials/breakdown', { title: 'Browsers', icon: 'compass', rows: stats.browsers.slice(0,5), total: stats.total }) %>
+  </div>
+
+  <!-- Scan log -->
+  <div class="mt-5 rounded-2xl bg-white/5 ring-1 ring-white/10 overflow-hidden">
+    <div class="flex items-center justify-between p-5 sm:p-6 border-b border-white/10">
+      <h2 class="font-semibold text-white">Scan log</h2>
+      <span class="text-xs text-slate-500"><%= scans.length %> scans</span>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="text-left text-slate-500">
+          <tr class="border-b border-white/5">
+            <th class="px-5 sm:px-6 py-3 font-medium">When</th>
+            <th class="px-4 py-3 font-medium">Location</th>
+            <th class="px-4 py-3 font-medium">Device</th>
+            <th class="px-4 py-3 font-medium">Browser</th>
+            <th class="px-5 sm:px-6 py-3 font-medium">OS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% scans.slice(0,100).forEach(function(s){
+             const loc = [s.location && s.location.city, s.location && (s.location.countryName || s.location.country)].filter(Boolean).join(', ') || '—'; %>
+          <tr class="border-b border-white/5 last:border-0 hover:bg-white/[0.03] transition">
+            <td class="px-5 sm:px-6 py-3 text-slate-300 whitespace-nowrap"><%= fmtTime(s.timestamp) %></td>
+            <td class="px-4 py-3 text-slate-300"><%= loc %></td>
+            <td class="px-4 py-3 text-slate-400 capitalize"><%= (s.device && s.device.type) || '—' %></td>
+            <td class="px-4 py-3 text-slate-400"><%= (s.device && s.device.browser) || '—' %></td>
+            <td class="px-5 sm:px-6 py-3 text-slate-400"><%= (s.device && s.device.os) || '—' %></td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <% } %>
+</main>
+
+<div id="toast" class="toast">Link copied to clipboard</div>
+
+<%- include('partials/footer') %>
+<% if (stats.total > 0) { %>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  window.ZIP = { timeline: <%- JSON.stringify(stats.timeline) %>, points: <%- JSON.stringify(stats.points) %> };
+</script>
+<script src="/js/charts.js"></script>
+<% } %>
+<script>
+  function copyLink(){
+    const i = document.getElementById('scan-url');
+    navigator.clipboard.writeText(i.value).then(()=>{ const t=document.getElementById('toast'); t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1800); });
+  }
+</script>
+</body>
+</html>

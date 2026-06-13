@@ -1,0 +1,74 @@
+<%- include('partials/head', { title: campaign.name }) %>
+<%- include('partials/nav') %>
+
+<main class="max-w-3xl mx-auto px-5 sm:px-6 py-12">
+  <a href="/" class="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-white transition mb-6">
+    <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to generator
+  </a>
+
+  <div class="reveal rounded-3xl bg-white/5 ring-1 ring-white/10 backdrop-blur-xl shadow-card p-7 sm:p-10">
+    <div class="flex items-center gap-2 text-brand-300 text-sm font-medium mb-2">
+      <i data-lucide="check-circle-2" class="w-5 h-5"></i> Your QR code is live and tracking
+    </div>
+    <h1 class="text-2xl sm:text-3xl font-bold text-white"><%= campaign.name %></h1>
+
+    <div class="mt-8 grid sm:grid-cols-2 gap-8 items-center">
+      <div class="qr-frame mx-auto w-60 max-w-full">
+        <img id="qr-img" src="<%= qr %>" alt="QR code for <%= campaign.name %>" />
+      </div>
+
+      <div class="space-y-5">
+        <div>
+          <p class="text-xs uppercase tracking-wide text-slate-500 mb-1.5">Tracked scan link</p>
+          <div class="flex items-center gap-2 rounded-xl bg-[#0b1220] ring-1 ring-white/10 p-2 pl-3.5">
+            <i data-lucide="link" class="w-4 h-4 text-slate-500 shrink-0"></i>
+            <input id="scan-url" value="<%= scanUrl %>" readonly
+              class="flex-1 bg-transparent text-sm text-slate-200 outline-none truncate" />
+            <button onclick="copyLink()" class="shrink-0 grid place-items-center w-9 h-9 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 transition" title="Copy link">
+              <i data-lucide="copy" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <p class="text-xs uppercase tracking-wide text-slate-500 mb-1.5">Redirects to</p>
+          <a href="<%= campaign.targetUrl %>" target="_blank" rel="noopener"
+            class="flex items-center gap-2 text-sm text-brand-300 hover:text-brand-200 break-all">
+            <i data-lucide="external-link" class="w-4 h-4 shrink-0"></i> <%= campaign.targetUrl %>
+          </a>
+        </div>
+
+        <div class="flex flex-col gap-2.5 pt-1">
+          <a id="download" href="<%= qr %>" download="ziplock-<%= campaign.slug %>.png"
+            class="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-[#06140e] bg-brand-400 hover:bg-brand-300 shadow-glow transition">
+            <i data-lucide="download" class="w-5 h-5"></i> Download PNG
+          </a>
+          <a href="/c/<%= campaign.slug %>"
+            class="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-slate-200 bg-white/5 ring-1 ring-white/10 hover:bg-white/10 transition">
+            <i data-lucide="bar-chart-3" class="w-5 h-5"></i> View analytics
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="mt-6 text-center text-sm text-slate-500">
+    Tip: print it large enough to scan from a comfortable distance — at least 2&nbsp;cm wide per metre of viewing distance.
+  </p>
+</main>
+
+<div id="toast" class="toast">Link copied to clipboard</div>
+
+<%- include('partials/footer') %>
+<script>
+  function copyLink() {
+    const input = document.getElementById('scan-url');
+    navigator.clipboard.writeText(input.value).then(() => {
+      const t = document.getElementById('toast');
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 1800);
+    });
+  }
+</script>
+</body>
+</html>

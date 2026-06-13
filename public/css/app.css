@@ -1,0 +1,74 @@
+/* ZipLock — global polish layered on top of Tailwind utilities */
+
+:root { color-scheme: dark; }
+
+html { scroll-behavior: smooth; }
+
+/* Ambient brand glow behind everything */
+.bg-aura {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60rem 40rem at 50% -10%, rgba(16,185,129,0.16), transparent 60%),
+    radial-gradient(40rem 30rem at 90% 10%, rgba(45,212,191,0.10), transparent 55%),
+    radial-gradient(40rem 30rem at 5% 30%, rgba(16,185,129,0.08), transparent 55%);
+}
+
+/* Subtle dotted grid texture */
+.bg-grid {
+  background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* Gradient headline text */
+.text-gradient {
+  background: linear-gradient(180deg, #ffffff 0%, #b7f7d8 130%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Reveal-on-load animations */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+.reveal { opacity: 0; animation: fadeUp 0.7s cubic-bezier(.22,1,.36,1) forwards; }
+.reveal-2 { animation-delay: .08s; }
+.reveal-3 { animation-delay: .16s; }
+.reveal-4 { animation-delay: .24s; }
+.fade-in { opacity: 0; animation: fadeIn 0.8s ease forwards; }
+.float { animation: floaty 6s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .fade-in, .float { animation: none !important; opacity: 1 !important; }
+  html { scroll-behavior: auto; }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+/* QR frame */
+.qr-frame { background: #fff; border-radius: 18px; padding: 14px; box-shadow: 0 20px 60px -20px rgba(16,185,129,0.5); }
+.qr-frame img { display: block; width: 100%; height: auto; border-radius: 8px; }
+
+/* Leaflet dark theme tweaks */
+.leaflet-container { background: #0b1220 !important; border-radius: 16px; font-family: inherit; }
+.leaflet-tile { filter: grayscale(0.4) brightness(0.7) contrast(1.05); }
+.leaflet-popup-content-wrapper, .leaflet-popup-tip { background: #0d1322; color: #e2e8f0; box-shadow: 0 10px 40px -12px rgba(0,0,0,0.7); }
+.leaflet-control-attribution { background: rgba(13,19,34,0.7) !important; color: #64748b !important; }
+.leaflet-control-attribution a { color: #94a3b8 !important; }
+.leaflet-bar a { background: #0d1322 !important; color: #cbd5e1 !important; border-color: rgba(255,255,255,0.1) !important; }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: #052e1c; color: #6ee7b7; border: 1px solid rgba(16,185,129,0.4);
+  padding: 10px 18px; border-radius: 12px; font-size: 14px; font-weight: 500;
+  opacity: 0; pointer-events: none; transition: all .3s ease; z-index: 60;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
