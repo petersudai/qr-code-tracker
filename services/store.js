@@ -77,6 +77,13 @@ const jsonStore = {
   async findCampaignByName(name) {
     return load().campaigns.find(c => c.name === name) || null;
   },
+  async updateCampaignTargetUrl(campaignId, targetUrl) {
+    const campaign = load().campaigns.find(c => sameId(c._id, campaignId));
+    if (!campaign) return null;
+    campaign.targetUrl = targetUrl;
+    persist();
+    return campaign;
+  },
   async assignUnownedCampaignsToUser(userId) {
     const db = load();
     const reassignedIds = [];
@@ -130,6 +137,9 @@ const mongoStore = {
   },
   async findCampaignByName(name) {
     return Campaign.findOne({ name }).lean();
+  },
+  async updateCampaignTargetUrl(campaignId, targetUrl) {
+    return Campaign.findByIdAndUpdate(campaignId, { targetUrl }, { new: true }).lean();
   },
   async assignUnownedCampaignsToUser(userId) {
     const unowned = await Campaign.find({ userId: null }, '_id');

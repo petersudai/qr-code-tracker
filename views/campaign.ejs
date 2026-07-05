@@ -25,14 +25,30 @@
     </div>
     <div>
       <h1 class="text-2xl sm:text-3xl font-bold text-white"><%= campaign.name %></h1>
-      <a href="<%= campaign.targetUrl %>" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-2 text-sm text-brand-300 hover:text-brand-200 break-all">
-        <i data-lucide="external-link" class="w-4 h-4 shrink-0"></i> <%= campaign.targetUrl %>
-      </a>
+
       <div class="mt-5 flex flex-wrap items-center gap-2 rounded-xl bg-[#0b1220] ring-1 ring-white/10 p-2 pl-3.5 max-w-md">
         <i data-lucide="link" class="w-4 h-4 text-slate-500 shrink-0"></i>
         <input id="scan-url" value="<%= scanUrl %>" readonly class="flex-1 min-w-0 bg-transparent text-sm text-slate-200 outline-none truncate" />
         <button onclick="copyLink()" class="shrink-0 grid place-items-center w-9 h-9 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 transition" title="Copy"><i data-lucide="copy" class="w-4 h-4"></i></button>
         <a href="<%= qr %>" download="ziplock-<%= campaign.slug %>.png" class="shrink-0 grid place-items-center w-9 h-9 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 transition" title="Download"><i data-lucide="download" class="w-4 h-4"></i></a>
+      </div>
+
+      <div class="mt-4 max-w-md">
+        <label for="redirect" class="block mb-1.5 text-xs uppercase tracking-wide text-slate-500">Redirects to <span class="normal-case text-slate-600">(the QR code itself never changes)</span></label>
+        <form action="/c/<%= campaign.slug %>/edit" method="POST" class="flex flex-wrap items-center gap-2">
+          <div class="relative flex-1 min-w-[220px]">
+            <i data-lucide="external-link" class="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+            <input id="redirect" name="redirect" type="text" required value="<%= campaign.targetUrl %>"
+              class="w-full pl-10 pr-3 py-2.5 rounded-xl bg-[#0b1220] text-sm text-white placeholder-slate-500 ring-1 ring-white/10 focus:ring-2 focus:ring-brand-400 outline-none transition" />
+          </div>
+          <button type="submit"
+            class="shrink-0 inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-semibold text-sm text-[#06140e] bg-brand-400 hover:bg-brand-300 shadow-glow transition">
+            <i data-lucide="save" class="w-4 h-4"></i> Save
+          </button>
+        </form>
+        <% if (editError) { %>
+        <p class="mt-2 flex items-center gap-1.5 text-sm text-amber-300"><i data-lucide="alert-triangle" class="w-4 h-4"></i> <%= editError %></p>
+        <% } %>
       </div>
     </div>
   </div>
@@ -66,7 +82,9 @@
   <div class="grid lg:grid-cols-5 gap-5 mt-5">
     <div class="lg:col-span-3 rounded-2xl bg-white/5 ring-1 ring-white/10 p-5 sm:p-6">
       <h2 class="font-semibold text-white mb-4">Scans · last 14 days</h2>
-      <canvas id="timelineChart" height="120"></canvas>
+      <div class="relative h-64">
+        <canvas id="timelineChart"></canvas>
+      </div>
     </div>
     <div class="lg:col-span-2 rounded-2xl bg-white/5 ring-1 ring-white/10 p-5 sm:p-6">
       <h2 class="font-semibold text-white mb-4">Scan locations</h2>

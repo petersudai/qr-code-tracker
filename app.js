@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 require('dotenv').config();
@@ -32,7 +33,14 @@ const sessionOpts = {
   cookie: { maxAge: 1000 * 60 * 60 * 24 }
 };
 if (validMongoUri(process.env.MONGO_URI)) {
-  sessionOpts.store = MongoStore.create({ mongoUrl: process.env.MONGO_URI });
+  // Reuse Mongoose's own connection instead of letting connect-mongo open a
+  // second, independent one — halves the connection work on a cold start.
+  sessionOpts.store = MongoStore.create({
+    clientPromise: connectDB().then(ok => {
+      if (!ok) throw new Error('MongoDB connection unavailable for session store');
+      return mongoose.connection.getClient();
+    })
+  });
 }
 app.use(session(sessionOpts));
 

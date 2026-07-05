@@ -35,8 +35,13 @@ async function connectDB() {
     })
     .catch(err => {
       console.error('❌ MongoDB connection failed:', err.message);
-      connectingPromise = null; // allow a retry on the next call
       return false;
+    })
+    .finally(() => {
+      // Clear the cache once this attempt settles — success or failure —
+      // so a later disconnect (idle timeout, network blip) triggers a fresh
+      // reconnect instead of forever replaying this stale resolved promise.
+      connectingPromise = null;
     });
 
   return connectingPromise;
