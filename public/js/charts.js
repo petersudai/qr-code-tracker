@@ -8,8 +8,8 @@
   if (canvas && window.Chart && data.timeline) {
     const ctx = canvas.getContext('2d');
     const grad = ctx.createLinearGradient(0, 0, 0, 160);
-    grad.addColorStop(0, 'rgba(16,185,129,0.35)');
-    grad.addColorStop(1, 'rgba(16,185,129,0.0)');
+    grad.addColorStop(0, 'rgba(207,255,62,0.35)');
+    grad.addColorStop(1, 'rgba(207,255,62,0.0)');
 
     const labels = data.timeline.map(d =>
       new Date(d.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
@@ -21,15 +21,15 @@
         labels,
         datasets: [{
           data: data.timeline.map(d => d.count),
-          borderColor: '#34d399',
+          borderColor: '#cfff3e',
           backgroundColor: grad,
           fill: true,
           tension: 0.4,
           borderWidth: 2.5,
           pointRadius: 0,
           pointHoverRadius: 5,
-          pointHoverBackgroundColor: '#34d399',
-          pointHoverBorderColor: '#06140e'
+          pointHoverBackgroundColor: '#cfff3e',
+          pointHoverBorderColor: '#0a0a0a'
         }]
       },
       options: {
@@ -38,11 +38,11 @@
         plugins: {
           legend: { display: false },
           tooltip: {
-            backgroundColor: '#0d1322',
+            backgroundColor: '#131316',
             borderColor: 'rgba(255,255,255,0.1)',
             borderWidth: 1,
             titleColor: '#e2e8f0',
-            bodyColor: '#34d399',
+            bodyColor: '#cfff3e',
             padding: 10,
             displayColors: false,
             callbacks: { label: c => `${c.parsed.y} scan${c.parsed.y === 1 ? '' : 's'}` }
@@ -68,7 +68,7 @@
     const latlngs = [];
     data.points.forEach(p => {
       const m = L.circleMarker([p.lat, p.lon], {
-        radius: 6, color: '#34d399', weight: 2, fillColor: '#10b981', fillOpacity: 0.6
+        radius: 6, color: '#cfff3e', weight: 2, fillColor: '#a8db1e', fillOpacity: 0.6
       }).addTo(map);
       const where = [p.city, p.country].filter(Boolean).join(', ') || 'Unknown';
       const when = p.timestamp ? new Date(p.timestamp).toLocaleString('en-GB') : '';

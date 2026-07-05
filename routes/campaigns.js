@@ -19,7 +19,7 @@ async function makeQr(scanUrl) {
     errorCorrectionLevel: 'M',
     margin: 2,
     width: 480,
-    color: { dark: '#0b1220', light: '#ffffff' }
+    color: { dark: '#0a0a0a', light: '#ffffff' }
   });
 }
 

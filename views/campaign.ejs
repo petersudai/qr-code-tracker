@@ -19,14 +19,14 @@
   </a>
 
   <!-- Header -->
-  <div class="rounded-3xl bg-white/5 ring-1 ring-white/10 backdrop-blur-xl shadow-card p-6 sm:p-8 grid md:grid-cols-[auto,1fr] gap-7 items-center">
+  <div class="rounded-3xl bg-[#131316] ring-1 ring-white/10 shadow-card p-6 sm:p-8 grid md:grid-cols-[auto,1fr] gap-7 items-center">
     <div class="qr-frame w-36 mx-auto md:mx-0">
       <img src="<%= qr %>" alt="QR code for <%= campaign.name %>" />
     </div>
     <div>
       <h1 class="text-2xl sm:text-3xl font-bold text-white"><%= campaign.name %></h1>
 
-      <div class="mt-5 flex flex-wrap items-center gap-2 rounded-xl bg-[#0b1220] ring-1 ring-white/10 p-2 pl-3.5 max-w-md">
+      <div class="mt-5 flex flex-wrap items-center gap-2 rounded-xl bg-[#0f0f11] ring-1 ring-white/10 p-2 pl-3.5 max-w-md">
         <i data-lucide="link" class="w-4 h-4 text-slate-500 shrink-0"></i>
         <input id="scan-url" value="<%= scanUrl %>" readonly class="flex-1 min-w-0 bg-transparent text-sm text-slate-200 outline-none truncate" />
         <button onclick="copyLink()" class="shrink-0 grid place-items-center w-9 h-9 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 transition" title="Copy"><i data-lucide="copy" class="w-4 h-4"></i></button>
@@ -39,10 +39,10 @@
           <div class="relative flex-1 min-w-[220px]">
             <i data-lucide="external-link" class="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
             <input id="redirect" name="redirect" type="text" required value="<%= campaign.targetUrl %>"
-              class="w-full pl-10 pr-3 py-2.5 rounded-xl bg-[#0b1220] text-sm text-white placeholder-slate-500 ring-1 ring-white/10 focus:ring-2 focus:ring-brand-400 outline-none transition" />
+              class="w-full pl-10 pr-3 py-2.5 rounded-xl bg-[#0f0f11] text-sm text-white placeholder-slate-500 ring-1 ring-white/10 focus:ring-2 focus:ring-brand-400 outline-none transition" />
           </div>
           <button type="submit"
-            class="shrink-0 inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-semibold text-sm text-[#06140e] bg-brand-400 hover:bg-brand-300 shadow-glow transition">
+            class="shrink-0 inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-semibold text-sm text-[#0a0a0a] bg-brand-400 hover:bg-brand-300 shadow-glow transition">
             <i data-lucide="save" class="w-4 h-4"></i> Save
           </button>
         </form>
@@ -62,7 +62,7 @@
       ['clock','Last scan', fmtAgo(stats.lastScan)]
     ]; %>
     <% cards.forEach(function(c){ %>
-    <div class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-5">
+    <div class="rounded-2xl bg-[#131316] ring-1 ring-white/10 p-5">
       <span class="grid place-items-center w-10 h-10 rounded-xl bg-brand-500/15 text-brand-400 mb-4"><i data-lucide="<%= c[0] %>" class="w-5 h-5"></i></span>
       <p class="text-sm text-slate-400"><%= c[1] %></p>
       <p class="text-2xl font-bold text-white mt-0.5 truncate" title="<%= c[2] %>"><%= c[2] %></p>
@@ -71,7 +71,7 @@
   </div>
 
   <% if (stats.total === 0) { %>
-    <div class="mt-5 rounded-2xl bg-white/5 ring-1 ring-white/10 p-12 text-center">
+    <div class="mt-5 rounded-2xl bg-[#131316] ring-1 ring-white/10 p-12 text-center">
       <span class="inline-grid place-items-center w-14 h-14 rounded-2xl bg-brand-500/15 text-brand-400 mb-4"><i data-lucide="radar" class="w-7 h-7"></i></span>
       <h2 class="text-lg font-bold text-white">Waiting for the first scan</h2>
       <p class="text-slate-400 mt-2 max-w-sm mx-auto">Print or share the code above. As soon as someone scans it, you'll see the location, device and time right here.</p>
@@ -80,18 +80,18 @@
 
   <!-- Chart + map -->
   <div class="grid lg:grid-cols-5 gap-5 mt-5">
-    <div class="lg:col-span-3 rounded-2xl bg-white/5 ring-1 ring-white/10 p-5 sm:p-6">
+    <div class="lg:col-span-3 rounded-2xl bg-[#131316] ring-1 ring-white/10 p-5 sm:p-6">
       <h2 class="font-semibold text-white mb-4">Scans · last 14 days</h2>
       <div class="relative h-64">
         <canvas id="timelineChart"></canvas>
       </div>
     </div>
-    <div class="lg:col-span-2 rounded-2xl bg-white/5 ring-1 ring-white/10 p-5 sm:p-6">
+    <div class="lg:col-span-2 rounded-2xl bg-[#131316] ring-1 ring-white/10 p-5 sm:p-6">
       <h2 class="font-semibold text-white mb-4">Scan locations</h2>
       <% if (stats.points.length) { %>
         <div id="map" class="h-64 rounded-xl"></div>
       <% } else { %>
-        <div class="h-64 grid place-items-center text-center text-sm text-slate-500 rounded-xl bg-[#0b1220] ring-1 ring-white/5">
+        <div class="h-64 grid place-items-center text-center text-sm text-slate-500 rounded-xl bg-[#0f0f11] ring-1 ring-white/5">
           <div><i data-lucide="map" class="w-7 h-7 mx-auto mb-2 text-slate-600"></i>Scans so far came from local networks,<br>which can't be placed on the map.</div>
         </div>
       <% } %>
@@ -106,7 +106,7 @@
   </div>
 
   <!-- Scan log -->
-  <div class="mt-5 rounded-2xl bg-white/5 ring-1 ring-white/10 overflow-hidden">
+  <div class="mt-5 rounded-2xl bg-[#131316] ring-1 ring-white/10 overflow-hidden">
     <div class="flex items-center justify-between p-5 sm:p-6 border-b border-white/10">
       <h2 class="font-semibold text-white">Scan log</h2>
       <span class="text-xs text-slate-500"><%= scans.length %> scans</span>

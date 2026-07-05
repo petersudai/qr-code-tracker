@@ -2,7 +2,7 @@
 <%- include('partials/nav') %>
 
 <main class="max-w-md mx-auto px-5 sm:px-6 py-16">
-  <div class="reveal rounded-3xl bg-white/5 ring-1 ring-white/10 backdrop-blur-xl shadow-card p-7 sm:p-9">
+  <div class="reveal rounded-3xl bg-[#131316] ring-1 ring-white/10 shadow-card p-7 sm:p-9">
     <div class="flex items-center gap-2 text-brand-300 text-sm font-medium mb-2">
       <i data-lucide="lock" class="w-5 h-5"></i> Welcome back
     </div>
@@ -20,16 +20,16 @@
         <label for="email" class="block mb-1.5 text-sm font-medium text-slate-300">Email</label>
         <input id="email" name="email" type="email" required value="<%= values.email || '' %>"
           placeholder="you@example.com"
-          class="w-full px-4 py-3 rounded-xl bg-[#0b1220] text-white placeholder-slate-500 ring-1 ring-white/10 focus:ring-2 focus:ring-brand-400 outline-none transition" />
+          class="w-full px-4 py-3 rounded-xl bg-[#0f0f11] text-white placeholder-slate-500 ring-1 ring-white/10 focus:ring-2 focus:ring-brand-400 outline-none transition" />
       </div>
       <div>
         <label for="password" class="block mb-1.5 text-sm font-medium text-slate-300">Password</label>
         <input id="password" name="password" type="password" required
           placeholder="••••••••"
-          class="w-full px-4 py-3 rounded-xl bg-[#0b1220] text-white placeholder-slate-500 ring-1 ring-white/10 focus:ring-2 focus:ring-brand-400 outline-none transition" />
+          class="w-full px-4 py-3 rounded-xl bg-[#0f0f11] text-white placeholder-slate-500 ring-1 ring-white/10 focus:ring-2 focus:ring-brand-400 outline-none transition" />
       </div>
       <button type="submit"
-        class="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl font-semibold text-[#06140e] bg-brand-400 hover:bg-brand-300 shadow-glow transition">
+        class="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl font-semibold text-[#0a0a0a] bg-brand-400 hover:bg-brand-300 shadow-glow transition">
         <i data-lucide="log-in" class="w-5 h-5"></i> Log in
       </button>
     </form>
