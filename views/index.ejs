@@ -14,8 +14,8 @@
           Know exactly where your QR codes get scanned.
         </h1>
         <p class="reveal reveal-3 mt-6 text-lg text-slate-400 max-w-xl">
-          Generate a QR code, point it anywhere, and ZipLock logs every scan with its
-          city, device and time — so your offline campaigns finally have analytics.
+          Generate a QR code, put it up anywhere, and ZipLock logs every scan:
+          city, device and time. Now your offline campaigns have real numbers behind them.
         </p>
         <div class="reveal reveal-4 mt-8 flex flex-wrap items-center gap-3">
           <a href="#generate" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-[#0a0a0a] bg-brand-400 hover:bg-brand-300 shadow-glow transition">
@@ -62,7 +62,7 @@
             <div class="mt-5 flex items-center justify-between">
               <div>
                 <p class="text-xs text-slate-400">Campaign</p>
-                <p class="font-semibold text-white">Nairobi CBD · Flyers</p>
+                <p class="font-semibold text-white">Downtown Flyers</p>
               </div>
               <span class="flex items-center gap-1.5 text-brand-300 text-sm font-semibold">
                 <i data-lucide="trending-up" class="w-4 h-4"></i> 248
@@ -88,7 +88,7 @@
               <div class="relative">
                 <i data-lucide="tag" class="w-5 h-5 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
                 <input id="campaign" name="campaign" type="text" required maxlength="80"
-                  placeholder="e.g. Nairobi CBD — Flyers"
+                  placeholder="e.g. Downtown Flyers"
                   class="w-full pl-11 pr-4 py-3 rounded-xl bg-[#0f0f11] text-white placeholder-slate-500 ring-1 ring-white/10 focus:ring-2 focus:ring-brand-400 outline-none transition" />
               </div>
             </div>
@@ -126,7 +126,7 @@
           <ol class="mt-5 space-y-5">
             <% const steps = [
               ['pen-line','Name it','Label the code by location or campaign so you can tell scans apart.'],
-              ['printer','Print & place it','Download the PNG and put it on flyers, posters, packaging — anywhere.'],
+              ['printer','Print & place it','Download the PNG and stick it on flyers, posters, or packaging.'],
               ['radar','Watch it live','Every scan shows up on your dashboard with city, device and time.']
             ]; %>
             <% steps.forEach(function(s, i){ %>

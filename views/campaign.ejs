@@ -57,7 +57,7 @@
   <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-5">
     <% const cards = [
       ['scan-line','Total scans', stats.total.toLocaleString()],
-      ['map-pin','Top location', stats.topCity || stats.topCountry || '—'],
+      ['map-pin','Top location', stats.topCity || stats.topCountry || '-'],
       ['globe','Countries', stats.countries.length.toLocaleString()],
       ['clock','Last scan', fmtAgo(stats.lastScan)]
     ]; %>
@@ -124,13 +124,13 @@
         </thead>
         <tbody>
           <% scans.slice(0,100).forEach(function(s){
-             const loc = [s.location && s.location.city, s.location && (s.location.countryName || s.location.country)].filter(Boolean).join(', ') || '—'; %>
+             const loc = [s.location && s.location.city, s.location && (s.location.countryName || s.location.country)].filter(Boolean).join(', ') || '-'; %>
           <tr class="border-b border-white/5 last:border-0 hover:bg-white/[0.03] transition">
             <td class="px-5 sm:px-6 py-3 text-slate-300 whitespace-nowrap"><%= fmtTime(s.timestamp) %></td>
             <td class="px-4 py-3 text-slate-300"><%= loc %></td>
-            <td class="px-4 py-3 text-slate-400 capitalize"><%= (s.device && s.device.type) || '—' %></td>
-            <td class="px-4 py-3 text-slate-400"><%= (s.device && s.device.browser) || '—' %></td>
-            <td class="px-5 sm:px-6 py-3 text-slate-400"><%= (s.device && s.device.os) || '—' %></td>
+            <td class="px-4 py-3 text-slate-400 capitalize"><%= (s.device && s.device.type) || '-' %></td>
+            <td class="px-4 py-3 text-slate-400"><%= (s.device && s.device.browser) || '-' %></td>
+            <td class="px-5 sm:px-6 py-3 text-slate-400"><%= (s.device && s.device.os) || '-' %></td>
           </tr>
           <% }); %>
         </tbody>
