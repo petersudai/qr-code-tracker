@@ -2,13 +2,15 @@ const express = require('express');
 const router = express.Router();
 const store = require('../services/store');
 const { summarize } = require('../services/analytics');
+const { requireAuth } = require('../services/authMiddleware');
 
-// Analytics overview across all campaigns.
-router.get('/dashboard', async (req, res) => {
+// Analytics overview across the logged-in user's campaigns.
+router.get('/dashboard', requireAuth, async (req, res) => {
   try {
+    const userId = req.session.userId;
     const [campaigns, scans] = await Promise.all([
-      store.listCampaigns(),
-      store.allScans()
+      store.listCampaignsByUser(userId),
+      store.allScansByUser(userId)
     ]);
 
     const stats = summarize(scans);

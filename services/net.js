@@ -20,13 +20,19 @@ function getLocalIP() {
 
 const localIP = getLocalIP();
 
-// True on any hosted environment: explicit NODE_ENV, or Render's own flag.
-const isProduction = process.env.NODE_ENV === 'production' || !!process.env.RENDER;
+// True on any hosted environment: explicit NODE_ENV, or Render's/Vercel's own flags.
+const isProduction =
+  process.env.NODE_ENV === 'production' || !!process.env.RENDER || !!process.env.VERCEL;
 
 // The public-facing base URL embedded in generated QR codes.
-// Priority: explicit override -> Render's external URL -> request host -> LAN dev IP.
+// Priority: explicit override -> Render's external URL -> Vercel's stable prod
+// domain -> Vercel's per-deployment URL -> request host -> LAN dev IP.
 function buildBaseUrl(req) {
-  const explicit = process.env.PUBLIC_URL || process.env.RENDER_EXTERNAL_URL;
+  const explicit =
+    process.env.PUBLIC_URL ||
+    process.env.RENDER_EXTERNAL_URL ||
+    (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : null) ||
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null);
   if (explicit) return explicit.replace(/\/+$/, '');
   if (isProduction) return `${req.protocol}://${req.headers.host}`;
   const port = process.env.PORT || 3000;

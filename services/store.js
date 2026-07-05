@@ -7,6 +7,9 @@
  *
  * Both backends return plain objects with a string-coercible `_id`, ISO/Date
  * timestamps, and the same shape, so routes don't care which is active.
+ *
+ * Every campaign/scan is scoped to the owning user (`userId`) — this app is
+ * multi-tenant, so nothing here returns data across account boundaries.
  */
 const fs = require('fs');
 const path = require('path');
@@ -22,8 +25,8 @@ function mongoReady() {
 
 /* ----------------------------- JSON backend ----------------------------- */
 
-// Configurable so a Render persistent disk (or any mount) can be used later:
-// set DATA_DIR=/var/data (the disk mount path) and the JSON store lives there.
+// Configurable so a persistent disk (or any mount) can be used later:
+// set DATA_DIR to the mount path and the JSON store lives there.
 const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, '..', 'data');
 const DATA_FILE = process.env.DATA_FILE || path.join(DATA_DIR, 'store.json');
 
@@ -47,14 +50,15 @@ function persist() {
 }
 
 const byNewest = (a, b) => new Date(b.timestamp || b.createdAt) - new Date(a.timestamp || a.createdAt);
+const sameId = (a, b) => a != null && b != null && String(a) === String(b);
 
 const jsonStore = {
   async campaignExists(slug) {
     return load().campaigns.some(c => c.slug === slug);
   },
-  async createCampaign({ name, slug, targetUrl }) {
+  async createCampaign({ name, slug, targetUrl, userId = null }) {
     const db = load();
-    const doc = { _id: nanoid(), name, slug, targetUrl, createdAt: new Date().toISOString() };
+    const doc = { _id: nanoid(), name, slug, targetUrl, userId, createdAt: new Date().toISOString() };
     db.campaigns.push(doc);
     persist();
     return doc;
@@ -62,14 +66,32 @@ const jsonStore = {
   async findCampaignBySlug(slug) {
     return load().campaigns.find(c => c.slug === slug) || null;
   },
-  async listCampaigns() {
-    return [...load().campaigns].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  async listCampaignsByUser(userId) {
+    return load().campaigns
+      .filter(c => sameId(c.userId, userId))
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   },
-  async recentCampaigns(limit = 4) {
-    return (await this.listCampaigns()).slice(0, limit);
+  async recentCampaignsByUser(userId, limit = 4) {
+    return (await this.listCampaignsByUser(userId)).slice(0, limit);
   },
   async findCampaignByName(name) {
     return load().campaigns.find(c => c.name === name) || null;
+  },
+  async assignUnownedCampaignsToUser(userId) {
+    const db = load();
+    const reassignedIds = [];
+    db.campaigns.forEach(c => {
+      if (c.userId == null) { c.userId = userId; reassignedIds.push(c._id); }
+    });
+    if (reassignedIds.length) {
+      // Cascade to each campaign's scans too — allScansByUser filters on the
+      // scan's own denormalized userId, not a join through the campaign.
+      db.scans.forEach(s => {
+        if (reassignedIds.some(id => sameId(id, s.campaign))) s.userId = userId;
+      });
+      persist();
+    }
+    return reassignedIds.length;
   },
   async createScan(scan) {
     const db = load();
@@ -80,10 +102,10 @@ const jsonStore = {
     return doc;
   },
   async findScansByCampaign(campaignId) {
-    return load().scans.filter(s => String(s.campaign) === String(campaignId)).sort(byNewest);
+    return load().scans.filter(s => sameId(s.campaign, campaignId)).sort(byNewest);
   },
-  async allScans() {
-    return [...load().scans].sort(byNewest);
+  async allScansByUser(userId) {
+    return load().scans.filter(s => sameId(s.userId, userId)).sort(byNewest);
   }
 };
 
@@ -100,14 +122,24 @@ const mongoStore = {
   async findCampaignBySlug(slug) {
     return Campaign.findOne({ slug }).lean();
   },
-  async listCampaigns() {
-    return Campaign.find().sort({ createdAt: -1 }).lean();
+  async listCampaignsByUser(userId) {
+    return Campaign.find({ userId }).sort({ createdAt: -1 }).lean();
   },
-  async recentCampaigns(limit = 4) {
-    return Campaign.find().sort({ createdAt: -1 }).limit(limit).lean();
+  async recentCampaignsByUser(userId, limit = 4) {
+    return Campaign.find({ userId }).sort({ createdAt: -1 }).limit(limit).lean();
   },
   async findCampaignByName(name) {
     return Campaign.findOne({ name }).lean();
+  },
+  async assignUnownedCampaignsToUser(userId) {
+    const unowned = await Campaign.find({ userId: null }, '_id');
+    const ids = unowned.map(c => c._id);
+    if (!ids.length) return 0;
+    await Campaign.updateMany({ _id: { $in: ids } }, { userId });
+    // Cascade to each campaign's scans too — allScansByUser filters on the
+    // scan's own denormalized userId, not a join through the campaign.
+    await Scan.updateMany({ campaign: { $in: ids } }, { userId });
+    return ids.length;
   },
   async createScan(scan) {
     const doc = await Scan.create(scan);
@@ -116,8 +148,8 @@ const mongoStore = {
   async findScansByCampaign(campaignId) {
     return Scan.find({ campaign: campaignId }).sort({ timestamp: -1 }).lean();
   },
-  async allScans() {
-    return Scan.find().sort({ timestamp: -1 }).lean();
+  async allScansByUser(userId) {
+    return Scan.find({ userId }).sort({ timestamp: -1 }).lean();
   }
 };
 

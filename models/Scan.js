@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 
 const scanSchema = new mongoose.Schema({
   campaign: { type: mongoose.Schema.Types.ObjectId, ref: 'Campaign', index: true },
+  // Denormalised from the campaign at scan time so per-user analytics need no join.
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null, index: true },
   // Denormalised campaign name kept for legacy/import rows without a ref.
   campaignName: { type: String },
   timestamp: { type: Date, default: Date.now, index: true },

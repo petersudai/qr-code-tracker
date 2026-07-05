@@ -5,6 +5,7 @@ const store = require('../services/store');
 const { uniqueSlug } = require('../services/slug');
 const { buildBaseUrl } = require('../services/net');
 const { summarize } = require('../services/analytics');
+const { requireAuth } = require('../services/authMiddleware');
 
 function normalizeUrl(url) {
   const trimmed = String(url || '').trim();
@@ -23,7 +24,7 @@ async function makeQr(scanUrl) {
 }
 
 // Create a campaign + its tracked QR code.
-router.post('/generate', async (req, res) => {
+router.post('/generate', requireAuth, async (req, res) => {
   const name = String(req.body.campaign || '').trim();
   const targetUrl = normalizeUrl(req.body.redirect);
 
@@ -36,7 +37,7 @@ router.post('/generate', async (req, res) => {
 
   try {
     const slug = await uniqueSlug(name);
-    const campaign = await store.createCampaign({ name, slug, targetUrl });
+    const campaign = await store.createCampaign({ name, slug, targetUrl, userId: req.session.userId });
     const scanUrl = `${buildBaseUrl(req)}/s/${slug}`;
     const qr = await makeQr(scanUrl);
     res.render('result', { page: 'result', campaign, scanUrl, qr });
@@ -49,11 +50,11 @@ router.post('/generate', async (req, res) => {
   }
 });
 
-// Single-campaign analytics.
-router.get('/c/:slug', async (req, res) => {
+// Single-campaign analytics — owner only.
+router.get('/c/:slug', requireAuth, async (req, res) => {
   try {
     const campaign = await store.findCampaignBySlug(req.params.slug);
-    if (!campaign) {
+    if (!campaign || String(campaign.userId) !== String(req.session.userId)) {
       return res.status(404).render('error', { page: 'error', message: 'Campaign not found.' });
     }
     const scans = await store.findScansByCampaign(campaign._id);

@@ -8,10 +8,19 @@
       </a>
       <div class="flex items-center gap-1 sm:gap-2 text-sm">
         <a href="/" class="px-3 py-2 rounded-lg font-medium <%= page === 'home' ? 'text-white bg-white/5' : 'text-slate-400 hover:text-white hover:bg-white/5' %> transition">Generate</a>
-        <a href="/dashboard" class="px-3 py-2 rounded-lg font-medium <%= page === 'dashboard' ? 'text-white bg-white/5' : 'text-slate-400 hover:text-white hover:bg-white/5' %> transition">Dashboard</a>
-        <a href="/#generate" class="hidden sm:inline-flex items-center gap-1.5 ml-1 px-3.5 py-2 rounded-lg font-semibold text-[#06140e] bg-brand-400 hover:bg-brand-300 shadow-glow transition">
-          <i data-lucide="plus" class="w-4 h-4"></i> New code
-        </a>
+        <% if (user) { %>
+          <a href="/dashboard" class="px-3 py-2 rounded-lg font-medium <%= page === 'dashboard' ? 'text-white bg-white/5' : 'text-slate-400 hover:text-white hover:bg-white/5' %> transition">Dashboard</a>
+          <span class="hidden sm:inline-block w-px h-5 bg-white/10 mx-1"></span>
+          <span class="hidden sm:inline text-slate-400 px-1">Hi, <%= user.name %></span>
+          <a href="/logout" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg font-semibold text-slate-200 bg-white/5 hover:bg-white/10 ring-1 ring-white/10 transition">
+            <i data-lucide="log-out" class="w-4 h-4"></i> <span class="hidden sm:inline">Log out</span>
+          </a>
+        <% } else { %>
+          <a href="/login" class="px-3 py-2 rounded-lg font-medium <%= page === 'login' ? 'text-white bg-white/5' : 'text-slate-400 hover:text-white hover:bg-white/5' %> transition">Log in</a>
+          <a href="/register" class="inline-flex items-center gap-1.5 ml-1 px-3.5 py-2 rounded-lg font-semibold text-[#06140e] bg-brand-400 hover:bg-brand-300 shadow-glow transition">
+            <i data-lucide="sparkles" class="w-4 h-4"></i> Sign up free
+          </a>
+        <% } %>
       </div>
     </nav>
   </header>

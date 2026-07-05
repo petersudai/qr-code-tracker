@@ -18,6 +18,7 @@ router.get('/s/:slug', async (req, res) => {
     store.createScan({
       campaign: campaign._id,
       campaignName: campaign.name,
+      userId: campaign.userId,
       ip,
       userAgent,
       device: parseDevice(userAgent),
