@@ -1,9 +1,7 @@
-  <header class="sticky top-0 z-40 backdrop-blur-xl bg-[#0a0a0a]/70 border-b border-white/10">
+  <header class="sticky top-0 z-40 bg-[#0a0a0a] border-b border-white/10">
     <nav class="max-w-6xl mx-auto px-5 sm:px-6 h-16 flex items-center justify-between">
-      <a href="/" class="flex items-center gap-2.5 group">
-        <span class="grid place-items-center w-9 h-9 rounded-xl bg-brand-500/15 ring-1 ring-brand-500/30 text-brand-400 group-hover:bg-brand-500/25 transition">
-          <i data-lucide="qr-code" class="w-5 h-5"></i>
-        </span>
+      <a href="/" class="flex items-center gap-2.5 py-2">
+        <i data-lucide="qr-code" class="w-6 h-6 text-white"></i>
         <span class="text-lg font-bold tracking-tight text-white">Zip<span class="text-brand-400">Lock</span></span>
       </a>
 
@@ -19,8 +17,8 @@
           </a>
         <% } else { %>
           <a href="/login" class="px-3 py-2 rounded-lg font-medium <%= page === 'login' ? 'text-white bg-white/5' : 'text-slate-400 hover:text-white hover:bg-white/5' %> transition">Log in</a>
-          <a href="/register" class="inline-flex items-center gap-1.5 ml-1 px-3.5 py-2 rounded-lg font-semibold text-[#0a0a0a] bg-brand-400 hover:bg-brand-300 shadow-glow transition">
-            <i data-lucide="sparkles" class="w-4 h-4"></i> Sign up free
+          <a href="/register" class="inline-flex items-center ml-1 px-3.5 py-2 rounded-lg font-semibold text-[#0a0a0a] bg-brand-400 hover:bg-brand-300 transition">
+            Sign up free
           </a>
         <% } %>
       </div>
@@ -34,7 +32,7 @@
     </nav>
 
     <!-- Mobile collapsible panel -->
-    <div id="nav-panel" class="hidden sm:hidden border-t border-white/10 bg-[#0a0a0a]/95">
+    <div id="nav-panel" class="hidden sm:hidden border-t border-white/10 bg-[#0a0a0a]">
       <div class="max-w-6xl mx-auto px-5 py-3 flex flex-col gap-1 text-sm">
         <a href="/" class="px-3 py-2.5 rounded-lg font-medium <%= page === 'home' ? 'text-white bg-white/5' : 'text-slate-400 hover:text-white hover:bg-white/5' %> transition">Generate</a>
         <% if (user) { %>
@@ -46,8 +44,8 @@
           </a>
         <% } else { %>
           <a href="/login" class="px-3 py-2.5 rounded-lg font-medium <%= page === 'login' ? 'text-white bg-white/5' : 'text-slate-400 hover:text-white hover:bg-white/5' %> transition">Log in</a>
-          <a href="/register" class="flex items-center gap-2 px-3 py-2.5 rounded-lg font-semibold text-[#0a0a0a] bg-brand-400 hover:bg-brand-300 shadow-glow transition">
-            <i data-lucide="sparkles" class="w-4 h-4"></i> Sign up free
+          <a href="/register" class="flex items-center px-3 py-2.5 rounded-lg font-semibold text-[#0a0a0a] bg-brand-400 hover:bg-brand-300 transition">
+            Sign up free
           </a>
         <% } %>
       </div>

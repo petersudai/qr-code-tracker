@@ -3,6 +3,11 @@
 (function () {
   const data = window.ZIP || {};
 
+  if (window.Chart) {
+    Chart.defaults.font.family = "'IBM Plex Mono', ui-monospace, monospace";
+    Chart.defaults.font.size = 11;
+  }
+
   // ---- Timeline chart ----
   const canvas = document.getElementById('timelineChart');
   if (canvas && window.Chart && data.timeline) {

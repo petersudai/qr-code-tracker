@@ -4,17 +4,20 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title><%= typeof title !== 'undefined' ? title : brand %> · ZipLock</title>
-  <meta name="description" content="ZipLock generates trackable QR codes and shows you exactly where, when and on what device they get scanned." />
+  <meta name="description" content="ZipLock makes QR codes you can track. Each scan is logged with its time, device and approximate location." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       darkMode: 'class',
       theme: {
         extend: {
-          fontFamily: { sans: ['Space Grotesk', 'system-ui', '-apple-system', 'sans-serif'] },
+          fontFamily: {
+            sans: ['Archivo', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['IBM Plex Mono', 'ui-monospace', 'SFMono-Regular', 'monospace']
+          },
           colors: {
             brand: {
               50:'#fbffee',100:'#f5ffd6',200:'#eeffb0',300:'#dfff7a',400:'#cfff3e',
@@ -22,7 +25,6 @@
             }
           },
           boxShadow: {
-            glow: '0 0 50px -12px rgba(207,255,62,0.45)',
             card: '0 10px 40px -12px rgba(0,0,0,0.5)'
           }
         }
@@ -39,4 +41,3 @@
   <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body class="min-h-screen bg-[#0a0a0a] text-slate-200 font-sans antialiased selection:bg-brand-500/30">
-  <div class="bg-aura"></div>

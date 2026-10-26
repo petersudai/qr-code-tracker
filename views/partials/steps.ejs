@@ -1,0 +1,16 @@
+<ol class="space-y-5">
+  <% const steps = [
+    ['Name the code','Label it by place or campaign so you can tell scans apart.'],
+    ['Print it','Download the PNG and put it on a flyer, poster or box.'],
+    ['Check the dashboard','Each scan shows its time and device, plus a city when we can work one out.']
+  ]; %>
+  <% steps.forEach(function(s, i){ %>
+  <li class="flex gap-4">
+    <span class="shrink-0 grid place-items-center w-8 h-8 rounded-lg bg-white/5 ring-1 ring-white/10 text-slate-300 font-mono text-sm"><%= i+1 %></span>
+    <div>
+      <p class="font-semibold text-white"><%= s[0] %></p>
+      <p class="text-sm text-slate-400 mt-0.5"><%= s[1] %></p>
+    </div>
+  </li>
+  <% }); %>
+</ol>

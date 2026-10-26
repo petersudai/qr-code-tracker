@@ -14,7 +14,7 @@
 <%- include('partials/nav') %>
 
 <main class="max-w-6xl mx-auto px-5 sm:px-6 py-10">
-  <a href="/dashboard" class="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-white transition mb-6">
+  <a href="/dashboard" class="inline-flex items-center gap-1.5 py-2 text-sm text-slate-400 hover:text-white transition mb-4">
     <i data-lucide="arrow-left" class="w-4 h-4"></i> All campaigns
   </a>
 
@@ -34,7 +34,7 @@
       </div>
 
       <div class="mt-4 max-w-md">
-        <label for="redirect" class="block mb-1.5 text-xs uppercase tracking-wide text-slate-500">Redirects to <span class="normal-case text-slate-600">(the QR code itself never changes)</span></label>
+        <label for="redirect" class="block mb-1.5 text-xs text-slate-500">Redirects to <span class="text-slate-600">(the QR code itself never changes)</span></label>
         <form action="/c/<%= campaign.slug %>/edit" method="POST" class="flex flex-wrap items-center gap-2">
           <div class="relative flex-1 min-w-[220px]">
             <i data-lucide="external-link" class="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
@@ -42,7 +42,7 @@
               class="w-full pl-10 pr-3 py-2.5 rounded-xl bg-[#0f0f11] text-sm text-white placeholder-slate-500 ring-1 ring-white/10 focus:ring-2 focus:ring-brand-400 outline-none transition" />
           </div>
           <button type="submit"
-            class="shrink-0 inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-semibold text-sm text-[#0a0a0a] bg-brand-400 hover:bg-brand-300 shadow-glow transition">
+            class="shrink-0 inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-semibold text-sm text-[#0a0a0a] bg-brand-400 hover:bg-brand-300 transition">
             <i data-lucide="save" class="w-4 h-4"></i> Save
           </button>
         </form>
@@ -56,43 +56,41 @@
   <!-- Stat cards -->
   <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-5">
     <% const cards = [
-      ['scan-line','Total scans', stats.total.toLocaleString()],
-      ['map-pin','Top location', stats.topCity || stats.topCountry || '-'],
-      ['globe','Countries', stats.countries.length.toLocaleString()],
-      ['clock','Last scan', fmtAgo(stats.lastScan)]
+      ['Total scans', stats.total.toLocaleString(), true],
+      ['Top location', stats.topCity || stats.topCountry || '-', false],
+      ['Countries', stats.countries.length.toLocaleString(), true],
+      ['Last scan', fmtAgo(stats.lastScan), false]
     ]; %>
     <% cards.forEach(function(c){ %>
     <div class="rounded-2xl bg-[#131316] ring-1 ring-white/10 p-5">
-      <span class="grid place-items-center w-10 h-10 rounded-xl bg-brand-500/15 text-brand-400 mb-4"><i data-lucide="<%= c[0] %>" class="w-5 h-5"></i></span>
-      <p class="text-sm text-slate-400"><%= c[1] %></p>
-      <p class="text-2xl font-bold text-white mt-0.5 truncate" title="<%= c[2] %>"><%= c[2] %></p>
+      <p class="text-sm text-slate-400"><%= c[0] %></p>
+      <p class="text-2xl font-semibold text-white mt-2 truncate <%= c[2] ? 'font-mono' : '' %>" title="<%= c[1] %>"><%= c[1] %></p>
     </div>
     <% }); %>
   </div>
 
   <% if (stats.total === 0) { %>
     <div class="mt-5 rounded-2xl bg-[#131316] ring-1 ring-white/10 p-12 text-center">
-      <span class="inline-grid place-items-center w-14 h-14 rounded-2xl bg-brand-500/15 text-brand-400 mb-4"><i data-lucide="radar" class="w-7 h-7"></i></span>
-      <h2 class="text-lg font-bold text-white">Waiting for the first scan</h2>
-      <p class="text-slate-400 mt-2 max-w-sm mx-auto">Print or share the code above. As soon as someone scans it, you'll see the location, device and time right here.</p>
+      <h2 class="text-lg font-bold text-white">No scans yet</h2>
+      <p class="text-slate-400 mt-2 max-w-sm mx-auto">Print or share the code above. Scans show up here with their time and device.</p>
     </div>
   <% } else { %>
 
   <!-- Chart + map -->
   <div class="grid lg:grid-cols-5 gap-5 mt-5">
-    <div class="lg:col-span-3 rounded-2xl bg-[#131316] ring-1 ring-white/10 p-5 sm:p-6">
+    <div class="min-w-0 lg:col-span-3 rounded-2xl bg-[#131316] ring-1 ring-white/10 p-5 sm:p-6">
       <h2 class="font-semibold text-white mb-4">Scans · last 14 days</h2>
       <div class="relative h-64">
         <canvas id="timelineChart"></canvas>
       </div>
     </div>
-    <div class="lg:col-span-2 rounded-2xl bg-[#131316] ring-1 ring-white/10 p-5 sm:p-6">
+    <div class="min-w-0 lg:col-span-2 rounded-2xl bg-[#131316] ring-1 ring-white/10 p-5 sm:p-6">
       <h2 class="font-semibold text-white mb-4">Scan locations</h2>
       <% if (stats.points.length) { %>
         <div id="map" class="h-64 rounded-xl"></div>
       <% } else { %>
         <div class="h-64 grid place-items-center text-center text-sm text-slate-500 rounded-xl bg-[#0f0f11] ring-1 ring-white/5">
-          <div><i data-lucide="map" class="w-7 h-7 mx-auto mb-2 text-slate-600"></i>Scans so far came from local networks,<br>which can't be placed on the map.</div>
+          <div>None of the scans so far could be placed on a map.<br>Local networks and some mobile carriers can't be.</div>
         </div>
       <% } %>
     </div>
@@ -126,7 +124,7 @@
           <% scans.slice(0,100).forEach(function(s){
              const loc = [s.location && s.location.city, s.location && (s.location.countryName || s.location.country)].filter(Boolean).join(', ') || '-'; %>
           <tr class="border-b border-white/5 last:border-0 hover:bg-white/[0.03] transition">
-            <td class="px-5 sm:px-6 py-3 text-slate-300 whitespace-nowrap"><%= fmtTime(s.timestamp) %></td>
+            <td class="px-5 sm:px-6 py-3 font-mono text-xs text-slate-300 whitespace-nowrap"><%= fmtTime(s.timestamp) %></td>
             <td class="px-4 py-3 text-slate-300"><%= loc %></td>
             <td class="px-4 py-3 text-slate-400 capitalize"><%= (s.device && s.device.type) || '-' %></td>
             <td class="px-4 py-3 text-slate-400"><%= (s.device && s.device.browser) || '-' %></td>
