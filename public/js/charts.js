@@ -5,7 +5,7 @@
 
   if (window.Chart) {
     Chart.defaults.font.family = "'IBM Plex Mono', ui-monospace, monospace";
-    Chart.defaults.font.size = 11;
+    Chart.defaults.font.size = 12;
   }
 
   // ---- Timeline chart ----
@@ -54,8 +54,8 @@
           }
         },
         scales: {
-          x: { grid: { display: false }, ticks: { color: '#64748b', maxRotation: 0, autoSkipPadding: 16 } },
-          y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b', precision: 0, maxTicksLimit: 5 } }
+          x: { grid: { display: false }, ticks: { color: '#8b98ab', maxRotation: 0, autoSkipPadding: 16 } },
+          y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b98ab', precision: 0, maxTicksLimit: 5 } }
         }
       }
     });

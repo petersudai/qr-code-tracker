@@ -13,7 +13,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <%- include('partials/nav') %>
 
-<main class="max-w-6xl mx-auto px-5 sm:px-6 py-10">
+<main id="main" tabindex="-1" class="max-w-6xl mx-auto px-5 sm:px-6 py-10">
   <a href="/dashboard" class="inline-flex items-center gap-1.5 py-2 text-sm text-slate-400 hover:text-white transition mb-4">
     <i data-lucide="arrow-left" class="w-4 h-4"></i> All campaigns
   </a>
@@ -28,18 +28,18 @@
 
       <div class="mt-5 flex flex-wrap items-center gap-2 rounded-xl bg-[#0f0f11] ring-1 ring-white/10 p-2 pl-3.5 max-w-md">
         <i data-lucide="link" class="w-4 h-4 text-slate-500 shrink-0"></i>
-        <input id="scan-url" value="<%= scanUrl %>" readonly class="flex-1 min-w-0 bg-transparent text-sm text-slate-200 outline-none truncate" />
-        <button onclick="copyLink()" class="shrink-0 grid place-items-center w-9 h-9 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 transition" title="Copy"><i data-lucide="copy" class="w-4 h-4"></i></button>
-        <a href="<%= qr %>" download="ziplock-<%= campaign.slug %>.png" class="shrink-0 grid place-items-center w-9 h-9 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 transition" title="Download"><i data-lucide="download" class="w-4 h-4"></i></a>
+        <input id="scan-url" aria-label="Tracked scan link" value="<%= scanUrl %>" readonly class="flex-1 min-w-0 bg-transparent text-sm text-slate-200 outline-none truncate" />
+        <button onclick="copyLink()" class="shrink-0 grid place-items-center w-9 h-9 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 transition" title="Copy" aria-label="Copy link"><i data-lucide="copy" class="w-4 h-4"></i></button>
+        <a href="<%= qr %>" download="ziplock-<%= campaign.slug %>.png" class="shrink-0 grid place-items-center w-9 h-9 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 transition" title="Download" aria-label="Download QR code as PNG"><i data-lucide="download" class="w-4 h-4"></i></a>
       </div>
 
       <div class="mt-4 max-w-md">
-        <label for="redirect" class="block mb-1.5 text-xs text-slate-500">Redirects to <span class="text-slate-600">(the QR code itself never changes)</span></label>
+        <label for="redirect" class="block mb-1.5 text-xs text-slate-500">Redirects to <span class="text-slate-500">(the QR code itself never changes)</span></label>
         <form action="/c/<%= campaign.slug %>/edit" method="POST" class="flex flex-wrap items-center gap-2">
           <div class="relative flex-1 min-w-[220px]">
             <i data-lucide="external-link" class="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
             <input id="redirect" name="redirect" type="text" required value="<%= campaign.targetUrl %>"
-              class="w-full pl-10 pr-3 py-2.5 rounded-xl bg-[#0f0f11] text-sm text-white placeholder-slate-500 ring-1 ring-white/10 focus:ring-2 focus:ring-brand-400 outline-none transition" />
+              class="w-full pl-10 pr-3 py-2.5 rounded-xl bg-[#0f0f11] text-sm text-white placeholder-slate-400 ring-1 ring-[#64748b] focus:ring-2 focus:ring-brand-400 outline-none transition" />
           </div>
           <button type="submit"
             class="shrink-0 inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-semibold text-sm text-[#0a0a0a] bg-brand-400 hover:bg-brand-300 transition">
@@ -47,7 +47,7 @@
           </button>
         </form>
         <% if (editError) { %>
-        <p class="mt-2 flex items-center gap-1.5 text-sm text-amber-300"><i data-lucide="alert-triangle" class="w-4 h-4"></i> <%= editError %></p>
+        <p role="alert" class="mt-2 flex items-center gap-1.5 text-sm text-amber-300"><i data-lucide="alert-triangle" class="w-4 h-4"></i> <%= editError %></p>
         <% } %>
       </div>
     </div>
@@ -81,13 +81,13 @@
     <div class="min-w-0 lg:col-span-3 rounded-2xl bg-[#131316] ring-1 ring-white/10 p-5 sm:p-6">
       <h2 class="font-semibold text-white mb-4">Scans · last 14 days</h2>
       <div class="relative h-64">
-        <canvas id="timelineChart"></canvas>
+        <canvas id="timelineChart" role="img" aria-label="Line chart of scans per day over the last 14 days"></canvas>
       </div>
     </div>
     <div class="min-w-0 lg:col-span-2 rounded-2xl bg-[#131316] ring-1 ring-white/10 p-5 sm:p-6">
       <h2 class="font-semibold text-white mb-4">Scan locations</h2>
       <% if (stats.points.length) { %>
-        <div id="map" class="h-64 rounded-xl"></div>
+        <div id="map" class="h-64 rounded-xl" role="region" aria-label="Map of scan locations"></div>
       <% } else { %>
         <div class="h-64 grid place-items-center text-center text-sm text-slate-500 rounded-xl bg-[#0f0f11] ring-1 ring-white/5">
           <div>None of the scans so far could be placed on a map.<br>Local networks and some mobile carriers can't be.</div>
@@ -113,11 +113,11 @@
       <table class="w-full text-sm">
         <thead class="text-left text-slate-500">
           <tr class="border-b border-white/5">
-            <th class="px-5 sm:px-6 py-3 font-medium">When</th>
-            <th class="px-4 py-3 font-medium">Location</th>
-            <th class="px-4 py-3 font-medium">Device</th>
-            <th class="px-4 py-3 font-medium">Browser</th>
-            <th class="px-5 sm:px-6 py-3 font-medium">OS</th>
+            <th scope="col" class="px-5 sm:px-6 py-3 font-medium">When</th>
+            <th scope="col" class="px-4 py-3 font-medium">Location</th>
+            <th scope="col" class="px-4 py-3 font-medium">Device</th>
+            <th scope="col" class="px-4 py-3 font-medium">Browser</th>
+            <th scope="col" class="px-5 sm:px-6 py-3 font-medium">OS</th>
           </tr>
         </thead>
         <tbody>
@@ -139,7 +139,7 @@
   <% } %>
 </main>
 
-<div id="toast" class="toast">Link copied to clipboard</div>
+<div id="toast" class="toast" role="status" aria-live="polite">Link copied to clipboard</div>
 
 <%- include('partials/footer') %>
 <% if (stats.total > 0) { %>

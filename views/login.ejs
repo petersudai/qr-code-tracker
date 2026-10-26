@@ -1,13 +1,13 @@
 <%- include('partials/head', { title: 'Log in' }) %>
 <%- include('partials/nav') %>
 
-<main class="max-w-md mx-auto px-5 sm:px-6 py-16">
+<main id="main" tabindex="-1" class="max-w-md mx-auto px-5 sm:px-6 py-16">
   <div class="reveal rounded-3xl bg-[#131316] ring-1 ring-white/10 shadow-card p-7 sm:p-9">
     <h1 class="text-2xl font-bold text-white">Log in</h1>
     <p class="text-slate-400 mt-1.5 text-sm">Log in to see your campaigns and their scans.</p>
 
     <% if (error) { %>
-    <div class="mt-5 flex items-start gap-2 rounded-xl bg-amber-500/10 ring-1 ring-amber-500/30 px-4 py-3 text-sm text-amber-300">
+    <div role="alert" class="mt-5 flex items-start gap-2 rounded-xl bg-amber-500/10 ring-1 ring-amber-500/30 px-4 py-3 text-sm text-amber-300">
       <i data-lucide="alert-triangle" class="w-4 h-4 mt-0.5 shrink-0"></i> <%= error %>
     </div>
     <% } %>
@@ -15,15 +15,15 @@
     <form action="/login" method="POST" class="mt-6 space-y-4">
       <div>
         <label for="email" class="block mb-1.5 text-sm font-medium text-slate-300">Email</label>
-        <input id="email" name="email" type="email" required value="<%= values.email || '' %>"
+        <input id="email" name="email" type="email" autocomplete="email" required value="<%= values.email || '' %>"
           placeholder="you@example.com"
-          class="w-full px-4 py-3 rounded-xl bg-[#0f0f11] text-white placeholder-slate-500 ring-1 ring-white/10 focus:ring-2 focus:ring-brand-400 outline-none transition" />
+          class="w-full px-4 py-3 rounded-xl bg-[#0f0f11] text-white placeholder-slate-400 ring-1 ring-[#64748b] focus:ring-2 focus:ring-brand-400 outline-none transition" />
       </div>
       <div>
         <label for="password" class="block mb-1.5 text-sm font-medium text-slate-300">Password</label>
-        <input id="password" name="password" type="password" required
+        <input id="password" name="password" type="password" autocomplete="current-password" required
           placeholder="••••••••"
-          class="w-full px-4 py-3 rounded-xl bg-[#0f0f11] text-white placeholder-slate-500 ring-1 ring-white/10 focus:ring-2 focus:ring-brand-400 outline-none transition" />
+          class="w-full px-4 py-3 rounded-xl bg-[#0f0f11] text-white placeholder-slate-400 ring-1 ring-[#64748b] focus:ring-2 focus:ring-brand-400 outline-none transition" />
       </div>
       <button type="submit"
         class="w-full inline-flex items-center justify-center px-5 py-3.5 rounded-xl font-semibold text-[#0a0a0a] bg-brand-400 hover:bg-brand-300 transition">

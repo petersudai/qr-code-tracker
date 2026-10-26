@@ -4,6 +4,10 @@
 
 html { scroll-behavior: smooth; }
 
+/* Clear keyboard focus on every interactive element */
+:focus-visible { outline: 2px solid #cfff3e; outline-offset: 2px; }
+main:focus { outline: none; }
+
 /* One quiet fade on page load for the main card */
 @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 .reveal { opacity: 0; animation: fadeUp 0.4s ease-out forwards; }

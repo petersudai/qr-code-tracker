@@ -1,7 +1,7 @@
 <%- include('partials/head', { title: campaign.name }) %>
 <%- include('partials/nav') %>
 
-<main class="max-w-3xl mx-auto px-5 sm:px-6 py-12">
+<main id="main" tabindex="-1" class="max-w-3xl mx-auto px-5 sm:px-6 py-12">
   <a href="/" class="inline-flex items-center gap-1.5 py-2 text-sm text-slate-400 hover:text-white transition mb-4">
     <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to generator
   </a>
@@ -20,9 +20,9 @@
           <p class="text-xs text-slate-500 mb-1.5">Tracked scan link</p>
           <div class="flex items-center gap-2 rounded-xl bg-[#0f0f11] ring-1 ring-white/10 p-2 pl-3.5">
             <i data-lucide="link" class="w-4 h-4 text-slate-500 shrink-0"></i>
-            <input id="scan-url" value="<%= scanUrl %>" readonly
+            <input id="scan-url" aria-label="Tracked scan link" value="<%= scanUrl %>" readonly
               class="flex-1 bg-transparent text-sm text-slate-200 outline-none truncate" />
-            <button onclick="copyLink()" class="shrink-0 grid place-items-center w-9 h-9 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 transition" title="Copy link">
+            <button onclick="copyLink()" class="shrink-0 grid place-items-center w-9 h-9 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 transition" title="Copy link" aria-label="Copy link">
               <i data-lucide="copy" class="w-4 h-4"></i>
             </button>
           </div>
@@ -55,7 +55,7 @@
   </p>
 </main>
 
-<div id="toast" class="toast">Link copied to clipboard</div>
+<div id="toast" class="toast" role="status" aria-live="polite">Link copied to clipboard</div>
 
 <%- include('partials/footer') %>
 <script>

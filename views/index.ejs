@@ -1,7 +1,7 @@
 <%- include('partials/head', { title: 'Trackable QR codes' }) %>
 <%- include('partials/nav') %>
 
-<main>
+<main id="main" tabindex="-1">
   <!-- Hero -->
   <section>
     <div class="max-w-6xl mx-auto px-5 sm:px-6 pt-16 pb-12 sm:pt-24 sm:pb-16 grid lg:grid-cols-2 gap-12 items-center">
@@ -67,13 +67,13 @@
               <label for="campaign" class="block mb-2 text-sm font-medium text-slate-300">Campaign name or location</label>
               <input id="campaign" name="campaign" type="text" required maxlength="80"
                 placeholder="e.g. Downtown Flyers"
-                class="w-full px-4 py-3 rounded-xl bg-[#0f0f11] text-white placeholder-slate-500 ring-1 ring-white/10 focus:ring-2 focus:ring-brand-400 outline-none transition" />
+                class="w-full px-4 py-3 rounded-xl bg-[#0f0f11] text-white placeholder-slate-400 ring-1 ring-[#64748b] focus:ring-2 focus:ring-brand-400 outline-none transition" />
             </div>
             <div>
               <label for="redirect" class="block mb-2 text-sm font-medium text-slate-300">Target URL</label>
               <input id="redirect" name="redirect" type="text" required
                 placeholder="yourwebsite.com/landing"
-                class="w-full px-4 py-3 rounded-xl bg-[#0f0f11] text-white placeholder-slate-500 ring-1 ring-white/10 focus:ring-2 focus:ring-brand-400 outline-none transition" />
+                class="w-full px-4 py-3 rounded-xl bg-[#0f0f11] text-white placeholder-slate-400 ring-1 ring-[#64748b] focus:ring-2 focus:ring-brand-400 outline-none transition" />
               <p class="mt-1.5 text-xs text-slate-500">We'll add <code class="font-mono text-slate-300">https://</code> for you if you forget it.</p>
             </div>
             <button type="submit"
@@ -86,7 +86,7 @@
           <div class="mt-7"><%- include('partials/steps') %></div>
           <% } %>
         </div>
-        <aside class="md:col-span-2 bg-[#0f0f11] border-t md:border-t-0 md:border-l border-white/10 p-7 sm:p-10">
+        <div class="md:col-span-2 bg-[#0f0f11] border-t md:border-t-0 md:border-l border-white/10 p-7 sm:p-10">
           <% if (user) { %>
           <h3 class="text-sm font-semibold text-slate-400">How it works</h3>
           <div class="mt-5"><%- include('partials/steps') %></div>
@@ -108,7 +108,7 @@
           </ul>
           <p class="mt-5 text-xs text-slate-500">The IP address is stored with each scan so the location can be worked out. The person scanning isn't asked for anything.</p>
           <% } %>
-        </aside>
+        </div>
       </div>
     </div>
   </section>
@@ -125,7 +125,7 @@
       <a href="/c/<%= c.slug %>" class="group rounded-2xl bg-[#131316] ring-1 ring-white/10 p-5 hover:ring-white/25 hover:bg-[#1c1c20] transition">
         <div class="flex items-start justify-between gap-3">
           <p class="font-semibold text-white truncate"><%= c.name %></p>
-          <i data-lucide="arrow-up-right" class="w-4 h-4 shrink-0 text-slate-600 group-hover:text-white transition"></i>
+          <i data-lucide="arrow-up-right" class="w-4 h-4 shrink-0 text-slate-500 group-hover:text-white transition"></i>
         </div>
         <p class="text-xs text-slate-500 truncate mt-1"><%= c.targetUrl %></p>
       </a>

@@ -19,10 +19,16 @@
             mono: ['IBM Plex Mono', 'ui-monospace', 'SFMono-Regular', 'monospace']
           },
           colors: {
+            // Muted text grey tuned to pass WCAG AA (4.5:1) on every surface the app uses.
+            slate: { 500: '#7f8da3' },
             brand: {
               50:'#fbffee',100:'#f5ffd6',200:'#eeffb0',300:'#dfff7a',400:'#cfff3e',
               500:'#a8db1e',600:'#84ad14',700:'#63820f',800:'#4b620e',900:'#3d4f11',950:'#212b06'
             }
+          },
+          // Fine print: 13px instead of Tailwind's 12px default.
+          fontSize: {
+            xs: ['0.8125rem', { lineHeight: '1.25rem' }]
           },
           boxShadow: {
             card: '0 10px 40px -12px rgba(0,0,0,0.5)'
@@ -41,3 +47,4 @@
   <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body class="min-h-screen bg-[#0a0a0a] text-slate-200 font-sans antialiased selection:bg-brand-500/30">
+  <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 focus:rounded-lg focus:bg-brand-400 focus:text-[#0a0a0a] focus:font-semibold">Skip to main content</a>
