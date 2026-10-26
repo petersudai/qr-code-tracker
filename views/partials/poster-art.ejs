@@ -1,0 +1,32 @@
+<%# Small illustrations for the print layouts. Locals: art, accent, fg, bg %>
+<svg viewBox="0 0 100 100" class="w-full h-full" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <% if (art === 'pet') { %>
+  <circle cx="50" cy="50" r="46" fill="<%= accent %>"/>
+  <ellipse cx="50" cy="66" rx="18" ry="14" fill="<%= fg %>"/>
+  <ellipse cx="29" cy="45" rx="7" ry="10" fill="<%= fg %>" transform="rotate(-22 29 45)"/>
+  <ellipse cx="42" cy="32" rx="7" ry="10.5" fill="<%= fg %>"/>
+  <ellipse cx="58" cy="32" rx="7" ry="10.5" fill="<%= fg %>"/>
+  <ellipse cx="71" cy="45" rx="7" ry="10" fill="<%= fg %>" transform="rotate(22 71 45)"/>
+  <% } else if (art === 'clinic') { %>
+  <circle cx="50" cy="50" r="46" fill="<%= accent %>"/>
+  <rect x="42" y="22" width="16" height="56" rx="4" fill="#ffffff"/>
+  <rect x="22" y="42" width="56" height="16" rx="4" fill="#ffffff"/>
+  <% } else if (art === 'seasonal') { %>
+  <path d="M2 30 Q 26 62 50 38 T 98 34" stroke="<%= fg %>" stroke-width="2" fill="none"/>
+  <circle cx="14" cy="46" r="8" fill="<%= accent %>"/>
+  <circle cx="34" cy="53" r="8" fill="#ffffff"/>
+  <circle cx="54" cy="42" r="8" fill="<%= accent %>"/>
+  <circle cx="74" cy="38" r="8" fill="#ffffff"/>
+  <circle cx="92" cy="42" r="8" fill="<%= accent %>"/>
+  <path d="M50 70 l3 8 8 3 -8 3 -3 8 -3 -8 -8 -3 8 -3z" fill="<%= accent %>"/>
+  <path d="M24 74 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2z" fill="#ffffff"/>
+  <path d="M78 76 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2z" fill="#ffffff"/>
+  <% } else if (art === 'carwash') { %>
+  <path d="M24 8 C24 8 10 26 10 38 a14 14 0 0 0 28 0 C38 26 24 8 24 8z" fill="<%= accent %>"/>
+  <path d="M70 4 C70 4 62 15 62 22 a8 8 0 0 0 16 0 C78 15 70 4 70 4z" fill="#ffffff"/>
+  <rect x="6" y="58" width="88" height="24" rx="9" fill="<%= fg %>"/>
+  <path d="M24 58 l10-18 h34 l12 18z" fill="<%= fg %>"/>
+  <circle cx="28" cy="84" r="10" fill="<%= accent %>" stroke="<%= bg %>" stroke-width="3"/>
+  <circle cx="72" cy="84" r="10" fill="<%= accent %>" stroke="<%= bg %>" stroke-width="3"/>
+  <% } %>
+</svg>

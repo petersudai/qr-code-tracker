@@ -1,0 +1,25 @@
+<%# A printed poster with a scannable code. Local: p %>
+<div class="relative <%= p.tilt || '' %>">
+  <span aria-hidden="true" class="absolute -top-2.5 left-1/2 z-10 -translate-x-1/2 w-16 h-5 -rotate-3 rounded-sm bg-white/80"></span>
+  <div class="rounded-xl overflow-hidden flex flex-col min-h-[400px] shadow-[0_14px_32px_-10px_rgba(0,0,0,0.8)]" style="background: <%= p.bg %>; color: <%= p.fg %>">
+    <div class="px-5 py-3 flex items-center justify-between gap-3 text-sm font-bold" style="background: <%= p.brandBg %>; color: <%= p.brandFg %>">
+      <span><%= p.brand %></span>
+      <span class="font-medium text-right"><%= p.tagline %></span>
+    </div>
+    <div class="px-5 pt-6 pb-4">
+      <p class="text-sm font-semibold"><%= p.kicker %></p>
+      <p class="mt-2 text-[2rem] font-bold leading-[1.05]"><%= p.title %></p>
+      <div class="mt-5 flex items-center gap-4">
+        <div class="shrink-0 w-24 h-24"><%- include('poster-art', { art: p.art, accent: p.accent, fg: p.fg, bg: p.bg }) %></div>
+        <span class="inline-block rounded-xl px-3 py-2 text-sm font-bold leading-snug" style="background: <%= p.accent %>; color: <%= p.accentFg %>"><%= p.offer %></span>
+      </div>
+    </div>
+    <div class="mt-auto px-5 pb-5 pt-2 flex items-end justify-between gap-3">
+      <div class="text-sm">
+        <p class="font-bold"><%= p.cta %></p>
+        <p class="mt-0.5 font-medium"><%= p.hours %></p>
+      </div>
+      <div class="qr-frame w-20 shrink-0"><img src="<%= p.qr %>" alt="QR code on the <%= p.alt %>" /></div>
+    </div>
+  </div>
+</div>

@@ -10,8 +10,9 @@
           See which of your printed QR codes get scanned.
         </h1>
         <p class="mt-6 text-lg text-slate-400 max-w-xl">
-          Make a QR code and put it on a flyer, a poster or a box. Each scan is logged with
-          the time, the device and an approximate location, and you read them on your dashboard.
+          Give each spot its own QR code and its own name, as exact as the hall, dorm or room.
+          Every scan is logged with its time and device, so you can see which spot gets the most
+          interest in your offer.
         </p>
         <div class="mt-8 flex flex-wrap items-center gap-3">
           <% if (user) { %>
@@ -30,29 +31,83 @@
         <p class="mt-6 text-sm text-slate-500">People scan with their phone camera. There is nothing for them to install.</p>
       </div>
 
-      <!-- Real QR + sample scan log -->
+      <%# QR code and placement preview %>
       <div class="w-full max-w-sm lg:justify-self-end">
         <div class="rounded-2xl bg-[#131316] ring-1 ring-white/10 p-5">
           <div class="flex items-center gap-4">
             <div class="qr-frame w-24 shrink-0"><img src="<%= heroQrSrc %>" alt="A QR code that opens ZipLock" /></div>
-            <p class="text-sm text-slate-400">This code is real. Point your phone camera at it and it opens ZipLock.</p>
+            <p class="text-sm text-slate-400">Point your phone camera at this code and it opens ZipLock.</p>
           </div>
           <div class="mt-5 pt-4 border-t border-white/10">
             <div class="flex items-center justify-between text-xs text-slate-500">
-              <span>Sample scan log</span>
-              <span>Sample data</span>
+              <span>Scans by placement</span>
+              <span>Preview</span>
             </div>
-            <ul class="mt-3 space-y-2 font-mono text-xs text-slate-300">
-              <li class="grid grid-cols-[3rem_1fr_auto] gap-x-3"><span class="text-slate-500">09:41</span><span class="truncate">Lisbon, Portugal</span><span class="text-slate-400">Safari</span></li>
-              <li class="grid grid-cols-[3rem_1fr_auto] gap-x-3"><span class="text-slate-500">09:38</span><span class="truncate">Austin, USA</span><span class="text-slate-400">Chrome</span></li>
-              <li class="grid grid-cols-[3rem_1fr_auto] gap-x-3"><span class="text-slate-500">09:12</span><span class="truncate text-slate-500">Location unknown</span><span class="text-slate-400">Chrome</span></li>
+            <ul class="mt-3 space-y-3 text-sm">
+              <% [['Hall 3 noticeboard', 41], ['Dorm 4 lobby', 23], ['Library entrance', 9]].forEach(function(r){ %>
+              <li>
+                <div class="flex items-center justify-between gap-3">
+                  <span class="truncate text-slate-200"><%= r[0] %></span>
+                  <span class="font-mono text-xs text-slate-300"><%= r[1] %></span>
+                </div>
+                <div class="mt-1.5 h-1.5 rounded-full bg-[#1c1c20] overflow-hidden" aria-hidden="true">
+                  <div class="h-full rounded-full bg-brand-400" style="width: <%= Math.round(r[1] / 41 * 100) %>%"></div>
+                </div>
+              </li>
+              <% }); %>
             </ul>
-            <p class="mt-3 text-xs text-slate-500">Your own scans appear here. Some networks can't be placed, so a few rows will say unknown.</p>
+            <p class="mt-3 text-xs text-slate-500">Your own codes appear here, one row per placement, with their scan counts.</p>
           </div>
         </div>
       </div>
     </div>
   </section>
+
+  <% if (!user) { %>
+  <!-- Codes in print -->
+  <section class="max-w-6xl mx-auto px-5 sm:px-6 py-8" aria-labelledby="print-heading">
+    <h2 id="print-heading" class="text-2xl font-bold text-white">Wherever you print it</h2>
+    <p class="mt-2 text-slate-400 max-w-2xl">
+      Pet grooming, clinics, car washes, seasonal promos. Here is how a code sits on a poster or a banner,
+      each one named for its exact spot.
+    </p>
+
+    <% const posters = [
+      { brand: 'Happy Paws Grooming', tagline: 'Mobile grooming', kicker: 'Pet grooming', title: 'Fresh paws, fresh coat.', offer: 'First groom 20% off', hours: 'Mon to Sat, 8am to 6pm', cta: 'Scan to book a slot',
+        bg: '#fff4e0', fg: '#2b1d0e', brandBg: '#2b1d0e', brandFg: '#fff4e0', accent: '#ff9d4d', accentFg: '#2b1d0e', art: 'pet', tilt: 'sm:-rotate-1',
+        qr: posterQr.pet, alt: 'pet grooming poster', placement: 'Maple Estate, Block B gate' },
+      { brand: 'Greenfield Family Clinic', tagline: 'Walk-ins welcome', kicker: 'Flu season', title: 'Walk-in flu shots.', offer: 'Same-day slots', hours: 'Daily, 8am to 8pm', cta: 'Scan to pick a time',
+        bg: '#f2fbf9', fg: '#083d3a', brandBg: '#0f766e', brandFg: '#ffffff', accent: '#0f766e', accentFg: '#ffffff', art: 'clinic', tilt: 'sm:rotate-1',
+        qr: posterQr.clinic, alt: 'clinic poster', placement: 'Westfield Campus, clinic waiting room' },
+      { brand: 'Lakeside Night Market', tagline: 'Fridays in December', kicker: 'Holiday market', title: 'Stalls, lights and hot chocolate.', offer: 'Open until 9pm', hours: 'Every Friday in December', cta: 'Scan for the stall map',
+        bg: '#14301f', fg: '#ffffff', brandBg: '#f2c94c', brandFg: '#14301f', accent: '#f2c94c', accentFg: '#14301f', art: 'seasonal', tilt: 'sm:-rotate-1',
+        qr: posterQr.seasonal, alt: 'holiday market poster', placement: 'Westfield Campus, Dorm 4 lobby' }
+    ]; %>
+    <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10">
+      <% posters.forEach(function(p){ %>
+      <figure>
+        <%- include('partials/poster', { p: p }) %>
+        <figcaption class="mt-4 text-sm">
+          <span class="block text-xs text-slate-500">Placement name</span>
+          <span class="font-mono text-slate-200"><%= p.placement %></span>
+        </figcaption>
+      </figure>
+      <% }); %>
+
+      <% const banner = { brand: 'Sparkle Hand Car Wash', tagline: 'Central Mall', title: 'Hand wash while you shop.', offer: 'Ready in about 30 minutes', hours: 'Open daily, 9am to 7pm', cta: "Scan to see today's slots",
+        bg: '#0f3a5f', fg: '#ffffff', brandBg: '#ffd23f', brandFg: '#0f3a5f', accent: '#ffd23f', accentFg: '#0f3a5f', art: 'carwash',
+        qr: posterQr.carwash, alt: 'car wash banner' }; %>
+      <figure class="sm:col-span-2 lg:col-span-3">
+        <%- include('partials/poster-banner', { p: banner }) %>
+        <figcaption class="mt-4 text-sm">
+          <span class="block text-xs text-slate-500">Placement name</span>
+          <span class="font-mono text-slate-200">Central Mall, parking level 2</span>
+        </figcaption>
+      </figure>
+    </div>
+    <p class="mt-8 text-sm text-slate-400">On any of them the code goes in a corner, with one short line that says what a scan gets people.</p>
+  </section>
+  <% } %>
 
   <!-- Generator for signed-in users, explainer for visitors -->
   <section id="generate" class="max-w-6xl mx-auto px-5 sm:px-6 py-8">
@@ -61,13 +116,14 @@
         <div class="md:col-span-3 p-7 sm:p-10">
           <% if (user) { %>
           <h2 class="text-2xl font-bold text-white">Generate a new QR code</h2>
-          <p class="mt-2 text-slate-400">Give it a name you'll recognise and the link people should land on.</p>
+          <p class="mt-2 text-slate-400">Name the exact spot it will go, and the link people should land on.</p>
           <form action="/generate" method="POST" class="mt-7 space-y-5">
             <div>
-              <label for="campaign" class="block mb-2 text-sm font-medium text-slate-300">Campaign name or location</label>
+              <label for="campaign" class="block mb-2 text-sm font-medium text-slate-300">Name this placement</label>
               <input id="campaign" name="campaign" type="text" required maxlength="80"
-                placeholder="e.g. Downtown Flyers"
+                placeholder="e.g. Hall 3 noticeboard"
                 class="w-full px-4 py-3 rounded-xl bg-[#0f0f11] text-white placeholder-slate-400 ring-1 ring-[#64748b] focus:ring-2 focus:ring-brand-400 outline-none transition" />
+              <p class="mt-1.5 text-xs text-slate-500">Be as exact as you like: a campus, a hall, a dorm, an estate or a shop. Each code is counted on its own.</p>
             </div>
             <div>
               <label for="redirect" class="block mb-2 text-sm font-medium text-slate-300">Target URL</label>
