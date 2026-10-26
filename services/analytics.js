@@ -62,4 +62,29 @@ function summarize(scans) {
   };
 }
 
-module.exports = { countBy, timeline, points, summarize };
+// Attach each campaign's scan count and most recent scan time.
+function withScanCounts(campaigns, scans) {
+  const byCampaign = new Map();
+  for (const s of scans) {
+    const key = String(s.campaign || s.campaignName);
+    const entry = byCampaign.get(key) || { count: 0, last: null };
+    entry.count += 1;
+    if (!entry.last || new Date(s.timestamp) > new Date(entry.last)) entry.last = s.timestamp;
+    byCampaign.set(key, entry);
+  }
+  return campaigns.map(c => {
+    const e = byCampaign.get(String(c._id)) || { count: 0, last: null };
+    return { ...c, scanCount: e.count, lastScan: e.last };
+  });
+}
+
+// The campaigns that have been scanned, most scanned first.
+function placementRanking(campaignRows, limit = 5) {
+  return campaignRows
+    .filter(c => c.scanCount > 0)
+    .sort((a, b) => b.scanCount - a.scanCount)
+    .slice(0, limit)
+    .map(c => ({ name: c.name, slug: c.slug, count: c.scanCount }));
+}
+
+module.exports = { countBy, timeline, points, summarize, withScanCounts, placementRanking };

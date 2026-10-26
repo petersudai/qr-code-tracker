@@ -33,6 +33,21 @@
 
       <%# QR code and placement preview %>
       <div class="w-full max-w-sm lg:justify-self-end">
+        <% if (user) { %>
+        <div class="rounded-2xl bg-[#131316] ring-1 ring-white/10 p-5">
+          <div class="flex items-center justify-between text-xs text-slate-500">
+            <span>Your top placements</span>
+            <a href="/dashboard" class="text-slate-300 hover:text-white underline underline-offset-4">Dashboard</a>
+          </div>
+          <% if (placements.length) { %>
+          <div class="mt-4"><%- include('partials/placements', { rows: placements }) %></div>
+          <% } else if (campaignCount) { %>
+          <p class="mt-4 text-sm text-slate-400">No scans yet. Once people scan your codes, your top placements show up here.</p>
+          <% } else { %>
+          <p class="mt-4 text-sm text-slate-400">You haven't made a code yet. Name the first spot below and generate it.</p>
+          <% } %>
+        </div>
+        <% } else { %>
         <div class="rounded-2xl bg-[#131316] ring-1 ring-white/10 p-5">
           <div class="flex items-center gap-4">
             <div class="qr-frame w-24 shrink-0"><img src="<%= heroQrSrc %>" alt="A QR code that opens ZipLock" /></div>
@@ -56,9 +71,10 @@
               </li>
               <% }); %>
             </ul>
-            <p class="mt-3 text-xs text-slate-500">Your own codes appear here, one row per placement, with their scan counts.</p>
+            <p class="mt-3 text-xs text-slate-500">Once you sign up, your own codes appear in a view like this, one row per placement, with their scan counts.</p>
           </div>
         </div>
+        <% } %>
       </div>
     </div>
   </section>
@@ -73,19 +89,19 @@
     </p>
 
     <% const posters = [
-      { brand: 'Happy Paws Grooming', tagline: 'Mobile grooming', kicker: 'Pet grooming', title: 'Fresh paws, fresh coat.', offer: 'First groom 20% off', hours: 'Mon to Sat, 8am to 6pm', cta: 'Scan to book a slot',
-        bg: '#fff4e0', fg: '#2b1d0e', brandBg: '#2b1d0e', brandFg: '#fff4e0', accent: '#ff9d4d', accentFg: '#2b1d0e', art: 'pet', tilt: 'sm:-rotate-1',
+      { brand: 'Happy Paws Grooming', tagline: 'Mobile grooming', kicker: 'Pet grooming', title: 'Dog and cat grooming at your home.', offer: '20% off your first groom', hours: 'Mon to Sat, 8am to 6pm', cta: 'Scan to book a slot',
+        bg: '#fff4e0', fg: '#2b1d0e', brandBg: '#2b1d0e', brandFg: '#fff4e0', accent: '#ff9d4d', accentFg: '#2b1d0e', art: 'pet',
         qr: posterQr.pet, alt: 'pet grooming poster', placement: 'Maple Estate, Block B gate' },
-      { brand: 'Greenfield Family Clinic', tagline: 'Walk-ins welcome', kicker: 'Flu season', title: 'Walk-in flu shots.', offer: 'Same-day slots', hours: 'Daily, 8am to 8pm', cta: 'Scan to pick a time',
-        bg: '#f2fbf9', fg: '#083d3a', brandBg: '#0f766e', brandFg: '#ffffff', accent: '#0f766e', accentFg: '#ffffff', art: 'clinic', tilt: 'sm:rotate-1',
+      { brand: 'Greenfield Family Clinic', tagline: 'Walk-ins welcome', kicker: 'Flu season', title: 'Flu shots without an appointment.', offer: 'Takes about 15 minutes', hours: 'Daily, 8am to 8pm', cta: 'Scan to pick a time',
+        bg: '#f2fbf9', fg: '#083d3a', brandBg: '#0f766e', brandFg: '#ffffff', accent: '#0f766e', accentFg: '#ffffff', art: 'clinic',
         qr: posterQr.clinic, alt: 'clinic poster', placement: 'Westfield Campus, clinic waiting room' },
-      { brand: 'Lakeside Night Market', tagline: 'Fridays in December', kicker: 'Holiday market', title: 'Stalls, lights and hot chocolate.', offer: 'Open until 9pm', hours: 'Every Friday in December', cta: 'Scan for the stall map',
-        bg: '#14301f', fg: '#ffffff', brandBg: '#f2c94c', brandFg: '#14301f', accent: '#f2c94c', accentFg: '#14301f', art: 'seasonal', tilt: 'sm:-rotate-1',
-        qr: posterQr.seasonal, alt: 'holiday market poster', placement: 'Westfield Campus, Dorm 4 lobby' }
+      { brand: 'Lakeside Night Market', tagline: 'Lakeside Park', kicker: 'Seasonal market', title: 'Night market, Fridays in December.', offer: 'Free entry', hours: '5pm to 9pm', cta: 'Scan for the stall list',
+        bg: '#14301f', fg: '#ffffff', brandBg: '#f2c94c', brandFg: '#14301f', accent: '#f2c94c', accentFg: '#14301f', art: 'seasonal',
+        qr: posterQr.seasonal, alt: 'night market poster', placement: 'Westfield Campus, Dorm 4 lobby' }
     ]; %>
     <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10">
       <% posters.forEach(function(p){ %>
-      <figure>
+      <figure class="flex flex-col">
         <%- include('partials/poster', { p: p }) %>
         <figcaption class="mt-4 text-sm">
           <span class="block text-xs text-slate-500">Placement name</span>
@@ -94,7 +110,7 @@
       </figure>
       <% }); %>
 
-      <% const banner = { brand: 'Sparkle Hand Car Wash', tagline: 'Central Mall', title: 'Hand wash while you shop.', offer: 'Ready in about 30 minutes', hours: 'Open daily, 9am to 7pm', cta: "Scan to see today's slots",
+      <% const banner = { brand: 'Sparkle Hand Car Wash', tagline: 'Central Mall', title: 'Hand car wash while you shop.', offer: 'Ready in about 30 minutes', hours: 'Open daily, 9am to 7pm', cta: "Scan to see today's slots",
         bg: '#0f3a5f', fg: '#ffffff', brandBg: '#ffd23f', brandFg: '#0f3a5f', accent: '#ffd23f', accentFg: '#0f3a5f', art: 'carwash',
         qr: posterQr.carwash, alt: 'car wash banner' }; %>
       <figure class="sm:col-span-2 lg:col-span-3">

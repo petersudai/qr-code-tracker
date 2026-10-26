@@ -73,6 +73,19 @@
     </div>
   </div>
 
+  <!-- Scans by placement -->
+  <div class="mt-5 rounded-2xl bg-[#131316] ring-1 ring-white/10 p-5 sm:p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="font-semibold text-white">Scans by placement</h2>
+      <span class="text-xs text-slate-500">Most scanned first</span>
+    </div>
+    <% if (placements.length) { %>
+      <%- include('partials/placements', { rows: placements, total: stats.total }) %>
+    <% } else { %>
+      <p class="text-sm text-slate-400 py-2">No scans yet. Each placement you print will be ranked here once people start scanning it.</p>
+    <% } %>
+  </div>
+
   <!-- Breakdown -->
   <div class="grid lg:grid-cols-3 gap-5 mt-5">
     <%- include('partials/breakdown', { title: 'Top countries', icon: 'globe', rows: stats.countries.slice(0,5), total: stats.total }) %>
@@ -86,7 +99,7 @@
       <h2 class="font-semibold text-white">Campaigns</h2>
       <span class="text-xs text-slate-500"><%= campaigns.length %> total</span>
     </div>
-    <div class="overflow-x-auto">
+    <div class="overflow-x-auto relative">
       <table class="w-full text-sm">
         <thead class="text-left text-slate-500">
           <tr class="border-b border-white/5">

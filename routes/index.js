@@ -3,9 +3,10 @@ const QRCode = require('qrcode');
 const router = express.Router();
 const store = require('../services/store');
 const { buildBaseUrl } = require('../services/net');
+const { withScanCounts, placementRanking } = require('../services/analytics');
 
-// The home page shows real, scannable QR codes that open the site itself:
-// one in the hero and one for each example poster.
+// Visitors see real, scannable QR codes that open the site itself:
+// one in the hero and one for each print layout.
 const POSTER_IDS = ['pet', 'clinic', 'seasonal', 'carwash'];
 const qrCache = new Map();
 async function qrFor(url) {
@@ -20,25 +21,46 @@ async function qrFor(url) {
   return qrCache.get(url);
 }
 
-// Landing page: marketing hero for everyone, generator form for logged-in users.
+// Landing page: marketing hero and print layouts for visitors; for signed-in
+// users, the generator form plus their own top placements and recent campaigns.
 router.get('/', async (req, res) => {
-  const base = buildBaseUrl(req);
   const signedIn = !!req.session.userId;
 
-  let recent = [];
   if (signedIn) {
+    let campaigns = [];
+    let placements = [];
     try {
-      recent = await store.recentCampaignsByUser(req.session.userId, 4);
+      const userId = req.session.userId;
+      const [list, scans] = await Promise.all([
+        store.listCampaignsByUser(userId),
+        store.allScansByUser(userId)
+      ]);
+      campaigns = list;
+      placements = placementRanking(withScanCounts(list, scans), 3);
     } catch (_) { /* never block the landing page on data */ }
+
+    return res.render('index', {
+      page: 'home',
+      recent: campaigns.slice(0, 4),
+      placements,
+      campaignCount: campaigns.length,
+      heroQrSrc: null,
+      posterQr: {}
+    });
   }
 
-  const heroQrSrc = await qrFor(base);
+  const base = buildBaseUrl(req);
   const posterQr = {};
-  if (!signedIn) {
-    for (const id of POSTER_IDS) posterQr[id] = await qrFor(`${base}/?ref=${id}`);
-  }
+  for (const id of POSTER_IDS) posterQr[id] = await qrFor(`${base}/?ref=${id}`);
 
-  res.render('index', { page: 'home', recent, heroQrSrc, posterQr });
+  res.render('index', {
+    page: 'home',
+    recent: [],
+    placements: [],
+    campaignCount: 0,
+    heroQrSrc: await qrFor(base),
+    posterQr
+  });
 });
 
 module.exports = router;

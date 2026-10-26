@@ -1,0 +1,15 @@
+<%# A ranked list of placements by scan count. Locals: rows [{name, slug, count}], total (optional, adds a share) %>
+<% const max = rows.length ? rows[0].count : 0; %>
+<ul class="space-y-4 text-sm">
+  <% rows.forEach(function(r, i){ %>
+  <li>
+    <div class="flex items-center justify-between gap-3 mb-1.5">
+      <a href="/c/<%= r.slug %>" class="truncate text-slate-200 hover:text-white hover:underline underline-offset-4"><%= r.name %></a>
+      <span class="shrink-0 font-mono text-xs text-slate-300"><%= r.count %><% if (typeof total !== 'undefined' && total) { %> · <%= Math.round(r.count / total * 100) %>%<% } %></span>
+    </div>
+    <div class="h-1.5 rounded-full bg-[#1c1c20] overflow-hidden" aria-hidden="true">
+      <div class="h-full rounded-full <%= i === 0 ? 'bg-brand-400' : 'bg-brand-400/40' %>" style="width: <%= max ? Math.round(r.count / max * 100) : 0 %>%"></div>
+    </div>
+  </li>
+  <% }); %>
+</ul>

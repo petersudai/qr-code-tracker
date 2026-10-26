@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const store = require('../services/store');
-const { summarize } = require('../services/analytics');
+const { summarize, withScanCounts, placementRanking } = require('../services/analytics');
 const { requireAuth } = require('../services/authMiddleware');
 
 // Analytics overview across the logged-in user's campaigns.
@@ -14,25 +14,13 @@ router.get('/dashboard', requireAuth, async (req, res) => {
     ]);
 
     const stats = summarize(scans);
-
-    // Per-campaign scan counts + last scan.
-    const countByCampaign = new Map();
-    for (const s of scans) {
-      const key = String(s.campaign || s.campaignName);
-      const entry = countByCampaign.get(key) || { count: 0, last: null };
-      entry.count += 1;
-      if (!entry.last || new Date(s.timestamp) > new Date(entry.last)) entry.last = s.timestamp;
-      countByCampaign.set(key, entry);
-    }
-    const campaignRows = campaigns.map(c => {
-      const e = countByCampaign.get(String(c._id)) || { count: 0, last: null };
-      return { ...c, scanCount: e.count, lastScan: e.last };
-    });
+    const campaignRows = withScanCounts(campaigns, scans);
 
     res.render('dashboard', {
       page: 'dashboard',
       stats,
       campaigns: campaignRows,
+      placements: placementRanking(campaignRows, 6),
       recentScans: scans.slice(0, 12)
     });
   } catch (err) {
